@@ -73,8 +73,9 @@ var (
 )
 
 func GenImage(outPath string, data ImageData, currentLoop, imageCount int, setting *common.Setting) {
-	if setting != nil && setting.FpsCount > 24 {
+	if setting != nil && setting.FpsCount > FpsCount {
 		FpsCount = setting.FpsCount
+		End = setting.FpsCount
 	}
 
 	dc := gg.NewContext(Width, Height)

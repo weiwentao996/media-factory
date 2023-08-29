@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/auto-video-tool.iml" filepath="$PROJECT_DIR$/.idea/auto-video-tool.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/media-factory.iml" filepath="$PROJECT_DIR$/.idea/media-factory.iml" />
     </modules>
   </component>
 </project>
