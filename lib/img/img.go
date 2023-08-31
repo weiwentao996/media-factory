@@ -9,6 +9,7 @@ import (
 	"image/color"
 	"math"
 	"strings"
+	"sync"
 )
 
 // ------------ 生成图片 ----------
@@ -109,7 +110,7 @@ func GenImage(outPath string, data ImageData, currentLoop, imageCount int, setti
 	default:
 		dc.DrawString(data.Title, (Width-sWidth)/2, sHeight+offsetY)
 	}
-	offsetY += sHeight * 2
+	offsetY += sHeight * 4
 
 	if data.Content != nil {
 		if data.Style.Content.Size <= 0 {
@@ -160,25 +161,57 @@ func GenImage(outPath string, data ImageData, currentLoop, imageCount int, setti
 		proArr = append(proArr, p)
 	}
 
-	for i := 0; i < FpsCount; i++ {
-		proImage := proArr[int(math.Floor(float64(i+1)/float64(WalkRate)))%len(proArr)]
-		bgc := gg.NewContextForImage(bg)
-		bgc.DrawImage(proImage, int(float64(Width)*(float64(FpsCount*currentLoop+i)/float64(FpsCount*imageCount))), Height-(128+(JumpRate-i%JumpRate)*(JumpHeight/JumpRate)))
-		//bgc.DrawImage(proImage, int(float64(Width)*(float64(FpsCount*currentLoop+i)/float64(FpsCount*imageCount))), Height-128)
-		switch {
-		case i < Black:
-		case i < Start:
-			img := adjustOpacity(dc.Image(), float64(i+1)/float64(Start))
-			bgc.DrawImage(img, 0, int(sHeight))
-		case i > End:
-			img := adjustOpacity(dc.Image(), float64(1)-float64(i%End)/float64(FpsCount-End))
-			bgc.DrawImage(img, 0, int(sHeight))
-		default:
-			bgc.DrawImage(dc.Image(), 0, int(sHeight))
+	if setting.HighPerformance {
+		// 多线程
+		wg := sync.WaitGroup{}
+		wg.Add(FpsCount)
+		for i := 0; i < FpsCount; i++ {
+			go func(fpsIndex int) {
+				proImage := proArr[int(math.Floor(float64(fpsIndex+1)/float64(WalkRate)))%len(proArr)]
+				bgc := gg.NewContextForImage(bg)
+				bgc.DrawImage(proImage, int(float64(Width)*(float64(FpsCount*currentLoop+fpsIndex)/float64(FpsCount*imageCount))), Height-(128+(JumpRate-fpsIndex%JumpRate)*(JumpHeight/JumpRate)))
+				//bgc.DrawImage(proImage, int(float64(Width)*(float64(FpsCount*currentLoop+fpsIndex)/float64(FpsCount*imageCount))), Height-128)
+				switch {
+				case fpsIndex < Black:
+				case fpsIndex < Start:
+					img := adjustOpacity(dc.Image(), float64(fpsIndex+1)/float64(Start))
+					bgc.DrawImage(img, 0, int(sHeight))
+				case fpsIndex > End:
+					img := adjustOpacity(dc.Image(), float64(1)-float64(fpsIndex%End)/float64(FpsCount-End))
+					bgc.DrawImage(img, 0, int(sHeight))
+				default:
+					bgc.DrawImage(dc.Image(), 0, int(sHeight))
+				}
+				fileName := fmt.Sprintf("%s/%05d.png", outPath, fpsIndex+(currentLoop*FpsCount))
+				if err := bgc.SavePNG(fileName); err != nil {
+					panic(err)
+				}
+				wg.Done()
+			}(i)
 		}
-		fileName := fmt.Sprintf("%s/%05d.png", outPath, i+(currentLoop*FpsCount))
-		if err := bgc.SavePNG(fileName); err != nil {
-			panic(err)
+
+		wg.Wait()
+	} else {
+		for i := 0; i < FpsCount; i++ {
+			proImage := proArr[int(math.Floor(float64(i+1)/float64(WalkRate)))%len(proArr)]
+			bgc := gg.NewContextForImage(bg)
+			bgc.DrawImage(proImage, int(float64(Width)*(float64(FpsCount*currentLoop+i)/float64(FpsCount*imageCount))), Height-(128+(JumpRate-i%JumpRate)*(JumpHeight/JumpRate)))
+			//bgc.DrawImage(proImage, int(float64(Width)*(float64(FpsCount*currentLoop+i)/float64(FpsCount*imageCount))), Height-128)
+			switch {
+			case i < Black:
+			case i < Start:
+				img := adjustOpacity(dc.Image(), float64(i+1)/float64(Start))
+				bgc.DrawImage(img, 0, int(sHeight))
+			case i > End:
+				img := adjustOpacity(dc.Image(), float64(1)-float64(i%End)/float64(FpsCount-End))
+				bgc.DrawImage(img, 0, int(sHeight))
+			default:
+				bgc.DrawImage(dc.Image(), 0, int(sHeight))
+			}
+			fileName := fmt.Sprintf("%s/%05d.png", outPath, i+(currentLoop*FpsCount))
+			if err := bgc.SavePNG(fileName); err != nil {
+				panic(err)
+			}
 		}
 	}
 }

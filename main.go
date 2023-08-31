@@ -41,7 +41,8 @@ func main() {
 
 	//cmd.GenVideo(essay.Page, "./sources/output")
 	cmd.GenVideoWithSetting(essay.Page, "./sources/output", &common.Setting{
-		FpsCount: 80,
+		FpsCount:        80,
+		HighPerformance: true,
 	})
 	fmt.Printf("按任意键结束 ...")
 	endKey := make([]byte, 1)
