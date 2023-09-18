@@ -105,7 +105,7 @@ var ContentColors = []Color{
 }
 
 var (
-	FpsCount   = 12       // 每幅图帧率
+	FpsCount   = 24       // 每幅图帧率
 	Black      = 4        // 留白
 	Start      = 12       // 开场透明结束帧
 	End        = FpsCount // 结束透明开始帧
