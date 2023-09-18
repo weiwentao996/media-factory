@@ -53,9 +53,8 @@ type CircularLinkedList struct {
 }
 
 type ProcessCircle struct {
-	Value  image.Image
-	ValueS int
-	Next   *ProcessCircle
+	Value image.Image
+	Next  *ProcessCircle
 }
 
 // 初始化一个空的环形链表
@@ -64,8 +63,8 @@ func NewCircularLinkedList() *CircularLinkedList {
 }
 
 // 插入节点到链表尾部
-func (cll *CircularLinkedList) Insert(data image.Image, str int) {
-	newNode := &ProcessCircle{Value: data, ValueS: str}
+func (cll *CircularLinkedList) Insert(data image.Image) {
+	newNode := &ProcessCircle{Value: data}
 	if cll.Head == nil {
 		cll.Head = newNode
 		cll.Tail = newNode
@@ -110,19 +109,15 @@ var (
 	Black      = 4        // 留白
 	Start      = 12       // 开场透明结束帧
 	End        = FpsCount // 结束透明开始帧
-	JumpHeight = 20       // 进度条跳的高度
+	JumpHeight = 6        // 进度条跳的高度
 	JumpRate   = 6        // 进度条跳的频率，每JumpRate帧完成一次跳跃
 	WalkRate   = 1        // 进度条步行的频率，每WalkRate帧完成一次跳跃
 )
 
 func GenImage(outPath string, data ImageData, currentLoop, imageCount int, setting *common.Setting) {
-	if setting != nil && setting.FpsCount > FpsCount {
-		FpsCount = setting.FpsCount
-		End = setting.FpsCount
-	}
-
-	if data.Style.LiveTime != 0 {
-
+	if setting != nil && setting.FpsRate != 0 {
+		FpsCount = int(math.Ceil(setting.FpsRate)) * len(data.Content)
+		End = FpsCount
 	}
 
 	dc := gg.NewContext(Width, Height)
@@ -218,7 +213,7 @@ func GenImage(outPath string, data ImageData, currentLoop, imageCount int, setti
 			panic(err)
 		}
 
-		processList.Insert(p, i)
+		processList.Insert(p)
 	}
 
 	if setting.HighPerformance {
@@ -226,9 +221,9 @@ func GenImage(outPath string, data ImageData, currentLoop, imageCount int, setti
 		wg := sync.WaitGroup{}
 		wg.Add(FpsCount)
 		for i := 0; i < FpsCount; i++ {
+			var proImage image.Image
+			proImage = processList.GetProcess()
 			go func(fpsIndex int) {
-				var proImage image.Image
-				proImage = processList.GetProcess()
 				bgc := gg.NewContextForImage(bg)
 				if bgImg != nil {
 					putImage(bgc, bgImg)
