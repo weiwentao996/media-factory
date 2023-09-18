@@ -47,10 +47,16 @@ func GenVideoWithSetting(essay []img.ImageData, outPath string, setting *common.
 	}
 
 	fpsRate := 8.0
+	if setting.FpsRate != 0 {
+		fpsRate = setting.FpsRate
+	}
 
 	maxTime := float64(img.FpsCount*len(essay))/fpsRate + 1
-	fmt.Printf("\033[1;32;42m%s\n", "正在合成视频......")
+	if setting.MaxTime != 0 {
+		maxTime = setting.MaxTime
+	}
 
+	fmt.Printf("\033[1;32;42m%s\n", "正在合成视频......")
 	bgmPath := sources.Path + "/mp3/Winter.mp3"
 
 	if setting != nil && setting.MusicRule != "" {
@@ -60,5 +66,6 @@ func GenVideoWithSetting(essay []img.ImageData, outPath string, setting *common.
 	if err := video.MultiImageToVideo(path+"/%05d.png", bgmPath, path, fpsRate, maxTime); err != nil {
 		panic(err)
 	}
+
 	fmt.Printf("\033[1;32;42m%s\n", "已生成视频!")
 }

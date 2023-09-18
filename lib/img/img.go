@@ -36,12 +36,52 @@ type Style struct {
 	Title      TitleStyle   `mapstructure:"title"`
 	Content    ContentStyle `mapstructure:"content"`
 	Background string       `mapstructure:"background"`
+	LiveTime   int          `mapstructure:"live_time"`
 }
 
 type Color struct {
 	R int
 	G int
 	B int
+}
+
+// 定义环形链表
+type CircularLinkedList struct {
+	Head    *ProcessCircle
+	Current *ProcessCircle
+	Tail    *ProcessCircle
+}
+
+type ProcessCircle struct {
+	Value  image.Image
+	ValueS int
+	Next   *ProcessCircle
+}
+
+// 初始化一个空的环形链表
+func NewCircularLinkedList() *CircularLinkedList {
+	return &CircularLinkedList{}
+}
+
+// 插入节点到链表尾部
+func (cll *CircularLinkedList) Insert(data image.Image, str int) {
+	newNode := &ProcessCircle{Value: data, ValueS: str}
+	if cll.Head == nil {
+		cll.Head = newNode
+		cll.Tail = newNode
+		cll.Current = newNode
+		newNode.Next = newNode
+	} else {
+		newNode.Next = cll.Head
+		cll.Tail.Next = newNode
+		cll.Tail = newNode
+	}
+}
+
+func (cll *CircularLinkedList) GetProcess() image.Image {
+	rs := cll.Current.Value
+	cll.Current = cll.Current.Next
+	return rs
 }
 
 const Width = 1920
@@ -66,11 +106,11 @@ var ContentColors = []Color{
 }
 
 var (
-	FpsCount   = 24       // 每幅图帧率
+	FpsCount   = 12       // 每幅图帧率
 	Black      = 4        // 留白
 	Start      = 12       // 开场透明结束帧
 	End        = FpsCount // 结束透明开始帧
-	JumpHeight = 4        // 进度条跳的高度
+	JumpHeight = 20       // 进度条跳的高度
 	JumpRate   = 6        // 进度条跳的频率，每JumpRate帧完成一次跳跃
 	WalkRate   = 1        // 进度条步行的频率，每WalkRate帧完成一次跳跃
 )
@@ -79,6 +119,10 @@ func GenImage(outPath string, data ImageData, currentLoop, imageCount int, setti
 	if setting != nil && setting.FpsCount > FpsCount {
 		FpsCount = setting.FpsCount
 		End = setting.FpsCount
+	}
+
+	if data.Style.LiveTime != 0 {
+
 	}
 
 	dc := gg.NewContext(Width, Height)
@@ -166,14 +210,15 @@ func GenImage(outPath string, data ImageData, currentLoop, imageCount int, setti
 		panic(err)
 	}
 
-	var proArr []image.Image
+	processList := NewCircularLinkedList()
 
 	for i := 0; i < 12; i++ {
-		p, err := gg.LoadImage(fmt.Sprintf("%s/img/process%d.png", sources.Path, i))
+		p, err := gg.LoadImage(fmt.Sprintf("%s/img/bugs/process%d.png", sources.Path, i))
 		if err != nil {
 			panic(err)
 		}
-		proArr = append(proArr, p)
+
+		processList.Insert(p, i)
 	}
 
 	if setting.HighPerformance {
@@ -182,7 +227,8 @@ func GenImage(outPath string, data ImageData, currentLoop, imageCount int, setti
 		wg.Add(FpsCount)
 		for i := 0; i < FpsCount; i++ {
 			go func(fpsIndex int) {
-				proImage := proArr[int(math.Floor(float64(fpsIndex+1)/float64(WalkRate)))%len(proArr)]
+				var proImage image.Image
+				proImage = processList.GetProcess()
 				bgc := gg.NewContextForImage(bg)
 				if bgImg != nil {
 					putImage(bgc, bgImg)
@@ -211,7 +257,7 @@ func GenImage(outPath string, data ImageData, currentLoop, imageCount int, setti
 		wg.Wait()
 	} else {
 		for i := 0; i < FpsCount; i++ {
-			proImage := proArr[int(math.Floor(float64(i+1)/float64(WalkRate)))%len(proArr)]
+			proImage := processList.GetProcess()
 			bgc := gg.NewContextForImage(bg)
 			bgc.DrawImage(proImage, int(float64(Width)*(float64(FpsCount*currentLoop+i)/float64(FpsCount*imageCount))), Height-(128+(JumpRate-i%JumpRate)*(JumpHeight/JumpRate)))
 			//bgc.DrawImage(proImage, int(float64(Width)*(float64(FpsCount*currentLoop+i)/float64(FpsCount*imageCount))), Height-128)
