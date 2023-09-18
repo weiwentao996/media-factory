@@ -8,6 +8,7 @@ import (
 	"image"
 	"image/color"
 	"math"
+	"net/http"
 	"strings"
 	"sync"
 )
@@ -32,8 +33,9 @@ type ContentStyle struct {
 }
 
 type Style struct {
-	Title   TitleStyle   `mapstructure:"title"`
-	Content ContentStyle `mapstructure:"content"`
+	Title      TitleStyle   `mapstructure:"title"`
+	Content    ContentStyle `mapstructure:"content"`
+	Background string       `mapstructure:"background"`
 }
 
 type Color struct {
@@ -151,6 +153,19 @@ func GenImage(outPath string, data ImageData, currentLoop, imageCount int, setti
 		panic(err)
 	}
 
+	var bgImg image.Image
+	if data.Style.Background != "" {
+		bgImg, err = GetImage(data.Style.Background)
+		if err != nil {
+			panic(err)
+		}
+		bgImg = adjustOpacity(bgImg, 0.6)
+	}
+
+	if err != nil {
+		panic(err)
+	}
+
 	var proArr []image.Image
 
 	for i := 0; i < 12; i++ {
@@ -169,6 +184,9 @@ func GenImage(outPath string, data ImageData, currentLoop, imageCount int, setti
 			go func(fpsIndex int) {
 				proImage := proArr[int(math.Floor(float64(fpsIndex+1)/float64(WalkRate)))%len(proArr)]
 				bgc := gg.NewContextForImage(bg)
+				if bgImg != nil {
+					putImage(bgc, bgImg)
+				}
 				bgc.DrawImage(proImage, int(float64(Width)*(float64(FpsCount*currentLoop+fpsIndex)/float64(FpsCount*imageCount))), Height-(128+(JumpRate-fpsIndex%JumpRate)*(JumpHeight/JumpRate)))
 				//bgc.DrawImage(proImage, int(float64(Width)*(float64(FpsCount*currentLoop+fpsIndex)/float64(FpsCount*imageCount))), Height-128)
 				switch {
@@ -216,6 +234,25 @@ func GenImage(outPath string, data ImageData, currentLoop, imageCount int, setti
 	}
 }
 
+func GetImage(path string) (image.Image, error) {
+	split := strings.Split(path, ":")
+	if len(split) > 0 && (split[0] == "http" || split[0] == "https") {
+		return getImageFromNet(path)
+	}
+	return gg.LoadImage(sources.Path + "/img/BG.png")
+}
+
+// GetImageFromNet 从远程读取图片
+func getImageFromNet(url string) (image.Image, error) {
+	res, err := http.Get(url)
+	if err != nil || res.StatusCode != 200 {
+		return nil, err
+	}
+	defer res.Body.Close()
+	m, _, err := image.Decode(res.Body)
+	return m, err
+}
+
 // adjustOpacity 将输入图像m的透明度变为原来的倍数。若原来为完成全不透明，则percentage = 0.5将变为半透明
 func adjustOpacity(m image.Image, percentage float64) image.Image {
 	bounds := m.Bounds()
@@ -233,4 +270,38 @@ func adjustOpacity(m image.Image, percentage float64) image.Image {
 		}
 	}
 	return newRgba
+}
+
+func putImage(dc *gg.Context, newBg image.Image) error {
+
+	// 设置背景颜色
+	dc.SetColor(color.White)
+	dc.Clear()
+
+	// 计算图片缩放比例
+	scaleX := float64(newBg.Bounds().Dy()) / float64(Height)
+	scaleY := float64(newBg.Bounds().Dx()) / float64(Width)
+
+	// 选择较小的缩放比例，确保图片完全适应背景
+	scale := math.Min(scaleX, scaleY)
+
+	// 计算缩放后图片的宽度和高度
+	scaledWidth := float64(newBg.Bounds().Dx()) * scale
+	scaledHeight := float64(newBg.Bounds().Dy()) * scale
+
+	// 计算图片在背景中居中的位置
+	xOffset := (float64(Width) - scaledWidth) / 2
+	yOffset := (float64(Height) - scaledHeight) / 2
+
+	// 创建一个新的绘图上下文
+	newBgC := gg.NewContext(int(scaledWidth), int(scaledHeight))
+
+	// 缩放并绘制图像
+	newBgC.Scale(scaleX, scaleY)
+	newBgC.DrawImage(newBg, 0, 0)
+
+	// 将图片绘制到背景中央
+	dc.DrawImage(newBgC.Image(), int(xOffset), int(yOffset))
+
+	return nil
 }
