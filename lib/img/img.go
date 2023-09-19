@@ -13,38 +13,6 @@ import (
 	"sync"
 )
 
-// ------------ 生成图片 ----------
-
-type ImageData struct {
-	Title   string   `mapstructure:"title"`
-	Content []string `mapstructure:"content"`
-	Style   Style    `mapstructure:"style"`
-}
-
-type TitleStyle struct {
-	Align string  `mapstructure:"align"`
-	Size  float64 `mapstructure:"size"`
-	Color *Color  `mapstructure:"color"`
-}
-type ContentStyle struct {
-	Align string  `mapstructure:"align"`
-	Size  float64 `mapstructure:"size"`
-	Color *Color  `mapstructure:"color"`
-}
-
-type Style struct {
-	Title      TitleStyle   `mapstructure:"title"`
-	Content    ContentStyle `mapstructure:"content"`
-	Background string       `mapstructure:"background"`
-	LiveTime   int          `mapstructure:"live_time"`
-}
-
-type Color struct {
-	R int
-	G int
-	B int
-}
-
 // 定义环形链表
 type CircularLinkedList struct {
 	Head    *ProcessCircle
@@ -86,7 +54,7 @@ func (cll *CircularLinkedList) GetProcess() image.Image {
 const Width = 1920
 const Height = 1080
 
-var ContentColors = []Color{
+var ContentColors = []common.Color{
 	{
 		R: 254,
 		G: 186,
@@ -104,25 +72,10 @@ var ContentColors = []Color{
 	},
 }
 
-var (
-	FpsCount   = 24       // 每幅图帧率
-	Black      = 4        // 留白
-	Start      = 12       // 开场透明结束帧
-	End        = FpsCount // 结束透明开始帧
-	JumpHeight = 6        // 进度条跳的高度
-	JumpRate   = 6        // 进度条跳的频率，每JumpRate帧完成一次跳跃
-	WalkRate   = 1        // 进度条步行的频率，每WalkRate帧完成一次跳跃
-)
-
-func GenImage(outPath string, data ImageData, currentLoop, imageCount int, setting *common.Setting) {
-	if setting != nil && setting.FpsRate != 0 {
-		FpsCount = int(math.Ceil(setting.FpsRate)) * len(data.Content)
-		End = FpsCount
-	}
-
+func GenImage(outPath string, data common.PageData, counter, allFpsCount int, setting *common.Setting) {
+	conf := common.GetConfig(setting, data)
 	dc := gg.NewContext(Width, Height)
 	offsetY := 10.0
-
 	// 标题
 	if data.Style.Title.Size <= 0 {
 		data.Style.Title.Size = 80
@@ -151,8 +104,8 @@ func GenImage(outPath string, data ImageData, currentLoop, imageCount int, setti
 	default:
 		dc.DrawString(data.Title, (Width-sWidth)/2, sHeight+offsetY)
 	}
-	offsetY += sHeight * 4
 
+	offsetY += sHeight * 4
 	if data.Content != nil {
 		if data.Style.Content.Size <= 0 {
 			data.Style.Content.Size = 60
@@ -219,58 +172,61 @@ func GenImage(outPath string, data ImageData, currentLoop, imageCount int, setti
 	if setting.HighPerformance {
 		// 多线程
 		wg := sync.WaitGroup{}
-		wg.Add(FpsCount)
-		for i := 0; i < FpsCount; i++ {
+		wg.Add(conf.FpsCount)
+		for i := 0; i < conf.FpsCount; i++ {
 			var proImage image.Image
 			proImage = processList.GetProcess()
-			go func(fpsIndex int) {
+			go func(fpsIndex int, counter int) {
 				bgc := gg.NewContextForImage(bg)
 				if bgImg != nil {
 					putImage(bgc, bgImg)
 				}
-				bgc.DrawImage(proImage, int(float64(Width)*(float64(FpsCount*currentLoop+fpsIndex)/float64(FpsCount*imageCount))), Height-(128+(JumpRate-fpsIndex%JumpRate)*(JumpHeight/JumpRate)))
-				//bgc.DrawImage(proImage, int(float64(Width)*(float64(FpsCount*currentLoop+fpsIndex)/float64(FpsCount*imageCount))), Height-128)
+				bgc.DrawImage(proImage, int(float64(Width)*(float64(counter)/float64(allFpsCount))), Height-(128+(conf.JumpRate-fpsIndex%conf.JumpRate)*(conf.JumpHeight/conf.JumpRate)))
 				switch {
-				case fpsIndex < Black:
-				case fpsIndex < Start:
-					img := adjustOpacity(dc.Image(), float64(fpsIndex+1)/float64(Start))
+				case fpsIndex < conf.Black:
+				case fpsIndex < conf.Start:
+					img := adjustOpacity(dc.Image(), float64(fpsIndex+1)/float64(conf.Start))
 					bgc.DrawImage(img, 0, int(sHeight))
-				case fpsIndex > End:
-					img := adjustOpacity(dc.Image(), float64(1)-float64(fpsIndex%End)/float64(FpsCount-End))
+				case fpsIndex > conf.End:
+					img := adjustOpacity(dc.Image(), float64(1)-float64(fpsIndex%conf.End)/float64(conf.FpsCount-conf.End))
 					bgc.DrawImage(img, 0, int(sHeight))
 				default:
 					bgc.DrawImage(dc.Image(), 0, int(sHeight))
 				}
-				fileName := fmt.Sprintf("%s/%05d.png", outPath, fpsIndex+(currentLoop*FpsCount))
+				fileName := fmt.Sprintf("%s/%05d.png", outPath, counter)
 				if err := bgc.SavePNG(fileName); err != nil {
 					panic(err)
 				}
 				wg.Done()
-			}(i)
+			}(i, counter)
+			counter++
 		}
 
 		wg.Wait()
 	} else {
-		for i := 0; i < FpsCount; i++ {
+		for i := 0; i < conf.FpsCount; i++ {
 			proImage := processList.GetProcess()
 			bgc := gg.NewContextForImage(bg)
-			bgc.DrawImage(proImage, int(float64(Width)*(float64(FpsCount*currentLoop+i)/float64(FpsCount*imageCount))), Height-(128+(JumpRate-i%JumpRate)*(JumpHeight/JumpRate)))
-			//bgc.DrawImage(proImage, int(float64(Width)*(float64(FpsCount*currentLoop+i)/float64(FpsCount*imageCount))), Height-128)
+			if bgImg != nil {
+				putImage(bgc, bgImg)
+			}
+			bgc.DrawImage(proImage, int(float64(Width)*(float64(counter+i)/float64(allFpsCount))), Height-(128+(conf.JumpRate-i%conf.JumpRate)*(conf.JumpHeight/conf.JumpRate)))
 			switch {
-			case i < Black:
-			case i < Start:
-				img := adjustOpacity(dc.Image(), float64(i+1)/float64(Start))
+			case i < conf.Black:
+			case i < conf.Start:
+				img := adjustOpacity(dc.Image(), float64(i+1)/float64(conf.Start))
 				bgc.DrawImage(img, 0, int(sHeight))
-			case i > End:
-				img := adjustOpacity(dc.Image(), float64(1)-float64(i%End)/float64(FpsCount-End))
+			case i > conf.End:
+				img := adjustOpacity(dc.Image(), float64(1)-float64(i%conf.End)/float64(conf.FpsCount-conf.End))
 				bgc.DrawImage(img, 0, int(sHeight))
 			default:
 				bgc.DrawImage(dc.Image(), 0, int(sHeight))
 			}
-			fileName := fmt.Sprintf("%s/%05d.png", outPath, i+(currentLoop*FpsCount))
+			fileName := fmt.Sprintf("%s/%05d.png", outPath, counter)
 			if err := bgc.SavePNG(fileName); err != nil {
 				panic(err)
 			}
+			counter++
 		}
 	}
 }

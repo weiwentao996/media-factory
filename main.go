@@ -5,12 +5,11 @@ import (
 	"github.com/spf13/viper"
 	"github.com/weiwentao996/media-factory/cmd"
 	"github.com/weiwentao996/media-factory/lib/common"
-	"github.com/weiwentao996/media-factory/lib/img"
 	"os"
 )
 
 type Essay struct {
-	Page []img.ImageData `mapstructure:"page" `
+	Page []common.PageData `mapstructure:"page" `
 }
 
 func main() {
@@ -41,8 +40,7 @@ func main() {
 
 	//cmd.GenVideo(essay.Page, "./sources/output")
 	cmd.GenVideoWithSetting(essay.Page, "./sources/output", &common.Setting{
-		FpsCount:        8,
-		FpsRate:         4,
+		FpsRate:         6,
 		HighPerformance: true,
 	})
 	fmt.Printf("按任意键结束 ...")

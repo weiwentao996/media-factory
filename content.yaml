@@ -1,7 +1,7 @@
 page:
   -
     title: Day 1
-    Content:
+    content:
       - Hello
       - Hi
       - Shanghai
@@ -9,9 +9,10 @@ page:
       - Tokyo
     style:
       background: https://img.iuhub.cn/unsplash/nature/photo-1526675367196-f43af7e3a6c2.jpg
+      live_time: 1
   -
     title: Day 2
-    Content:
+    content:
       - 你好
       - Hi
       - Shanghai
@@ -19,35 +20,48 @@ page:
       - Tokyo
     style:
       background: https://img.iuhub.cn/unsplash/nature/photo-1509316975850-ff9c5deb0cd9.jpg
+      live_time: 2
   -
     title: Day 3
-    Content:
+    content:
       - Hello
       - 嗨
       - Shanghai
       - HongKong
       - Tokyo
+    style:
+      background: https://img.iuhub.cn/unsplash/nature/photo-1509316975850-ff9c5deb0cd9.jpg
+      live_time: 3
   -
     title: Day 4
-    Content:
+    content:
       - Hello
       - Hi
       - 上海
       - HongKong
       - Tokyo
+    style:
+      background: https://img.iuhub.cn/unsplash/nature/photo-1509316975850-ff9c5deb0cd9.jpg
+      live_time: 4
   -
     title: Day 5
-    Content:
+    content:
       - Hello
       - Hi
       - Shanghai
       - 香港
       - Tokyo
+    style:
+      background: https://img.iuhub.cn/unsplash/nature/photo-1509316975850-ff9c5deb0cd9.jpg
+      live_time: 5
   -
     title: Day 6
-    Content:
+    content:
       - Hello
       - Hi
       - Shanghai
       - HongKong
       - 东京
+    style:
+      background: https://img.iuhub.cn/unsplash/nature/photo-1509316975850-ff9c5deb0cd9.jpg
+      live_time: 6
