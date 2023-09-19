@@ -3,40 +3,40 @@ package common
 import "math"
 
 type Setting struct {
-	FpsRate         float64
-	MaxTime         float64
-	MusicRule       string
-	HighPerformance bool
+	FpsRate         float64 `json:"fps_rate"`
+	MaxTime         float64 `json:"max_time"`
+	MusicRule       string  `json:"music_rule"`
+	HighPerformance bool    `json:"high_performance"`
 }
 
 type PageData struct {
-	Title   string   `mapstructure:"title"`
-	Content []string `mapstructure:"content"`
-	Style   Style    `mapstructure:"style"`
+	Title   string   `json:"title" mapstructure:"title"`
+	Content []string `json:"content" mapstructure:"content"`
+	Style   Style    `json:"style" mapstructure:"style"`
 }
 
 type Style struct {
-	Title      TitleStyle   `mapstructure:"title"`
-	Content    ContentStyle `mapstructure:"content"`
-	Background string       `mapstructure:"background"`
-	LiveTime   int          `mapstructure:"live_time"`
+	Title      TitleStyle   `json:"title" mapstructure:"title"`
+	Content    ContentStyle `json:"content" mapstructure:"content"`
+	Background string       `json:"background" mapstructure:"background"`
+	LiveTime   int          `json:"live_time" mapstructure:"live_time"`
 }
 
 type TitleStyle struct {
-	Align string  `mapstructure:"align"`
-	Size  float64 `mapstructure:"size"`
-	Color *Color  `mapstructure:"color"`
+	Align string  `json:"align" mapstructure:"align"`
+	Size  float64 `json:"size" mapstructure:"size"`
+	Color *Color  `json:"color" mapstructure:"color"`
 }
 type ContentStyle struct {
-	Align string  `mapstructure:"align"`
-	Size  float64 `mapstructure:"size"`
-	Color *Color  `mapstructure:"color"`
+	Align string  `json:"align" mapstructure:"align"`
+	Size  float64 `json:"size" mapstructure:"size"`
+	Color *Color  `json:"color" mapstructure:"color"`
 }
 
 type Color struct {
-	R int
-	G int
-	B int
+	R int `json:"r"`
+	G int `json:"g"`
+	B int `json:"b"`
 }
 
 var (
