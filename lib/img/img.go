@@ -112,23 +112,30 @@ func GenImage(outPath string, data common.PageData, counter, allFpsCount int, se
 		dc.SetRGB255(data.Style.Title.Color.R, data.Style.Title.Color.G, data.Style.Title.Color.B)
 	}
 
+	sWidth, sHeight := dc.MeasureString(data.Title)
+	var x, y float64
+	switch strings.ToLower(data.Style.Title.Align) {
+	case "left":
+		x, y = 0, sHeight+offsetY
+	case "right":
+		x, y = Width-sWidth, sHeight+offsetY
+	case "center":
+		x, y = (Width-sWidth)/2, sHeight+offsetY
+	default:
+		x, y = (Width-sWidth)/2, sHeight+offsetY
+	}
+
+	rectColor := color.RGBA{0, 47, 167, 200} // 背景色
+	dc.SetColor(rectColor)
+	dc.DrawRectangle(x, y-0.9*sHeight, sWidth, sHeight*1.2)
+	dc.Fill()
+
 	if data.Style.Title.Color == nil {
 		dc.SetRGB255(237, 90, 101)
 	}
+	dc.DrawString(data.Title, x, y)
 
-	sWidth, sHeight := dc.MeasureString(data.Title)
-	switch strings.ToLower(data.Style.Title.Align) {
-	case "left":
-		dc.DrawString(data.Title, 0, sHeight+offsetY)
-	case "right":
-		dc.DrawString(data.Title, Width-sWidth, sHeight+offsetY)
-	case "center":
-		dc.DrawString(data.Title, (Width-sWidth)/2, sHeight+offsetY)
-	default:
-		dc.DrawString(data.Title, (Width-sWidth)/2, sHeight+offsetY)
-	}
-
-	offsetY += sHeight * 4
+	offsetY += sHeight * 3
 	if data.Content != nil {
 		if data.Style.Content.Size <= 0 {
 			data.Style.Content.Size = 60
@@ -152,21 +159,28 @@ func GenImage(outPath string, data common.PageData, counter, allFpsCount int, se
 
 		for i, c := range data.Content {
 			cWidth, cHeight := dc.MeasureString(c)
+			var x, y float64
+			switch strings.ToLower(data.Style.Content.Align) {
+			case "left":
+				x, y = 0, cWidth+cHeight
+			case "right":
+				x, y = Width-cWidth, cHeight+offsetY
+			case "center":
+				x, y = (Width-cWidth)/2, cHeight+offsetY
+			default:
+				x, y = (Width-cWidth)/2, cHeight+offsetY
+			}
+
+			dc.SetColor(rectColor)
+			dc.DrawRectangle(x, y-0.9*cHeight, cWidth, cHeight*1.2)
+			dc.Fill()
+
 			if data.Style.Content.Color == nil {
 				colorIndex := i % len(ContentColors)
 				dc.SetRGB255(ContentColors[colorIndex].R, ContentColors[colorIndex].G, ContentColors[colorIndex].B)
 			}
+			dc.DrawString(c, x, y)
 
-			switch strings.ToLower(data.Style.Content.Align) {
-			case "left":
-				dc.DrawString(c, 0, cHeight+offsetY)
-			case "right":
-				dc.DrawString(c, Width-cWidth, cHeight+offsetY)
-			case "center":
-				dc.DrawString(c, (Width-cWidth)/2, cHeight+offsetY)
-			default:
-				dc.DrawString(c, (Width-cWidth)/2, cHeight+offsetY)
-			}
 			offsetY += cHeight * 2
 		}
 	}
@@ -187,7 +201,7 @@ func GenImage(outPath string, data common.PageData, counter, allFpsCount int, se
 		if err != nil {
 			panic(err)
 		}
-		bgImg = adjustOpacity(bgImg, 0.5)
+		//bgImg = adjustOpacity(bgImg, 0.3)
 	}
 
 	if err != nil {
