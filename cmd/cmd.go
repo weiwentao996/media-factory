@@ -5,7 +5,6 @@ import (
 	"github.com/weiwentao996/media-factory/lib/common"
 	"github.com/weiwentao996/media-factory/lib/img"
 	"github.com/weiwentao996/media-factory/lib/video"
-	"github.com/weiwentao996/media-factory/sources"
 	"os"
 	"time"
 )
@@ -44,7 +43,7 @@ func GenVideoWithSetting(essay []common.PageData, outPath string, setting *commo
 	}
 
 	fmt.Printf("\033[1;32;42m%s\n", "正在合成视频......")
-	bgmPath := sources.Path + "/mp3/Winter.mp3"
+	bgmPath := ""
 
 	if setting != nil && setting.MusicRule != "" {
 		bgmPath = setting.MusicRule

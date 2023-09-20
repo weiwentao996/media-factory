@@ -39,7 +39,7 @@ func main() {
 	fmt.Printf("\033[1;32;42m%s\n", "读取文件成功!")
 
 	//cmd.GenVideo(essay.Page, "./sources/output")
-	cmd.GenVideoWithSetting(essay.Page, "./sources/output", &common.Setting{
+	cmd.GenVideoWithSetting(essay.Page, "./output", &common.Setting{
 		FpsRate:         6,
 		HighPerformance: true,
 	})

@@ -1,10 +1,13 @@
 package img
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/fogleman/gg"
+	"github.com/golang/freetype/truetype"
 	"github.com/weiwentao996/media-factory/lib/common"
 	"github.com/weiwentao996/media-factory/sources"
+	"golang.org/x/image/font"
 	"image"
 	"image/color"
 	"math"
@@ -72,6 +75,18 @@ var ContentColors = []common.Color{
 	},
 }
 
+func LoadFontFace(fontBytes []byte, points float64) (font.Face, error) {
+	f, err := truetype.Parse(fontBytes)
+	if err != nil {
+		return nil, err
+	}
+	face := truetype.NewFace(f, &truetype.Options{
+		Size: points,
+		// Hinting: font.HintingFull,
+	})
+	return face, nil
+}
+
 func GenImage(outPath string, data common.PageData, counter, allFpsCount int, setting *common.Setting) {
 	conf := common.GetConfig(setting, data)
 	dc := gg.NewContext(Width, Height)
@@ -81,9 +96,17 @@ func GenImage(outPath string, data common.PageData, counter, allFpsCount int, se
 		data.Style.Title.Size = 80
 	}
 
-	if err := dc.LoadFontFace(sources.Path+"/front/Aa厚底黑.ttf", data.Style.Title.Size); err != nil {
+	titleFrontBytes, err := sources.Sources.ReadFile("fronts/Aa厚底黑.ttf")
+	if err != nil {
 		panic(err)
 	}
+
+	face, err := LoadFontFace(titleFrontBytes, data.Style.Title.Size)
+	if err != nil {
+		panic(err)
+	}
+
+	dc.SetFontFace(face)
 
 	if data.Style.Title.Color != nil {
 		dc.SetRGB255(data.Style.Title.Color.R, data.Style.Title.Color.G, data.Style.Title.Color.B)
@@ -115,9 +138,17 @@ func GenImage(outPath string, data common.PageData, counter, allFpsCount int, se
 			dc.SetRGB255(data.Style.Content.Color.R, data.Style.Content.Color.G, data.Style.Content.Color.B)
 		}
 
-		if err := dc.LoadFontFace(sources.Path+"/front/Leefont蒙黑体.ttf", data.Style.Content.Size); err != nil {
+		contentFrontBytes, err := sources.Sources.ReadFile("fronts/Leefont蒙黑体.ttf")
+		if err != nil {
 			panic(err)
 		}
+
+		contentFace, err := LoadFontFace(contentFrontBytes, data.Style.Content.Size)
+		if err != nil {
+			panic(err)
+		}
+
+		dc.SetFontFace(contentFace)
 
 		for i, c := range data.Content {
 			cWidth, cHeight := dc.MeasureString(c)
@@ -140,7 +171,12 @@ func GenImage(outPath string, data common.PageData, counter, allFpsCount int, se
 		}
 	}
 
-	bg, err := gg.LoadImage(sources.Path + "/img/BG.png")
+	imageBytes, err := sources.Sources.ReadFile("img/BG.png")
+	if err != nil {
+		panic(err)
+	}
+	reader := bytes.NewReader(imageBytes)
+	bg, _, err := image.Decode(reader)
 	if err != nil {
 		panic(err)
 	}
@@ -161,7 +197,12 @@ func GenImage(outPath string, data common.PageData, counter, allFpsCount int, se
 	processList := NewCircularLinkedList()
 
 	for i := 0; i < 12; i++ {
-		p, err := gg.LoadImage(fmt.Sprintf("%s/img/bugs/process%d.png", sources.Path, i))
+		imageBytes, err = sources.Sources.ReadFile(fmt.Sprintf("img/bugs/process%d.png", i))
+		if err != nil {
+			panic(err)
+		}
+		reader = bytes.NewReader(imageBytes)
+		p, _, err := image.Decode(reader)
 		if err != nil {
 			panic(err)
 		}
@@ -236,7 +277,16 @@ func GetImage(path string) (image.Image, error) {
 	if len(split) > 0 && (split[0] == "http" || split[0] == "https") {
 		return getImageFromNet(path)
 	}
-	return gg.LoadImage(sources.Path + "/img/BG.png")
+	imageBytes, err := sources.Sources.ReadFile("img/BG.png")
+	if err != nil {
+		panic(err)
+	}
+	reader := bytes.NewReader(imageBytes)
+	bg, _, err := image.Decode(reader)
+	if err != nil {
+		panic(err)
+	}
+	return bg, nil
 }
 
 // GetImageFromNet 从远程读取图片
