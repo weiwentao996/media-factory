@@ -151,7 +151,7 @@ func GenImage(outPath string, data common.PageData, counter, allFpsCount int, se
 		if err != nil {
 			panic(err)
 		}
-		bgImg = adjustOpacity(bgImg, 0.6)
+		bgImg = adjustOpacity(bgImg, 0.5)
 	}
 
 	if err != nil {
@@ -272,7 +272,7 @@ func adjustOpacity(m image.Image, percentage float64) image.Image {
 func putImage(dc *gg.Context, newBg image.Image) error {
 
 	// 设置背景颜色
-	dc.SetColor(color.White)
+	//dc.SetColor(color.White)
 	dc.Clear()
 
 	// 计算图片缩放比例
