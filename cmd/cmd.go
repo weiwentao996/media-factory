@@ -15,6 +15,7 @@ import (
 func GenVideoWithSetting(essay []common.PageData, outPath string, setting *common.Setting) {
 	fmt.Printf("\033[1;32;42m%s\n", "开始生成视频!")
 	path := fmt.Sprintf("%s/%d", outPath, time.Now().Unix())
+	bgmPath := path + "voice.wav"
 	if err := os.MkdirAll(path, 0444); err != nil {
 		panic(err)
 	}
@@ -23,11 +24,11 @@ func GenVideoWithSetting(essay []common.PageData, outPath string, setting *commo
 	allFpsCount := 0
 	var voiceTime []int
 	for i, e := range essay {
-		_, t := voice.GenVoice(e.Content, path)
-		second := int(math.Ceil(t.Seconds())) - 1
+		t := voice.CalVoiceTime(e.Content, bgmPath)
+		second := int(math.Ceil(t)) - 1
 		essay[i].Style.LiveTime = second
 		voiceTime = append(voiceTime, second)
-		conf := common.GetConfig(setting, e)
+		conf := common.GetConfig(setting, essay[i])
 		allFpsCount += conf.FpsCount
 	}
 
@@ -40,7 +41,7 @@ func GenVideoWithSetting(essay []common.PageData, outPath string, setting *commo
 		counter += conf.FpsCount
 	}
 	fmt.Printf("\033[1;32;42m%s\n", "正在生成音频......")
-	genVoice, _ := voice.GenVoice(voices, path)
+	voice.GetVoiceTTS(voices, bgmPath)
 	fpsRate := 8.0
 	if setting.FpsRate != 0 {
 		fpsRate = setting.FpsRate
@@ -52,7 +53,6 @@ func GenVideoWithSetting(essay []common.PageData, outPath string, setting *commo
 	}
 
 	fmt.Printf("\033[1;32;42m%s\n", "正在合成视频......")
-	bgmPath := genVoice
 
 	if setting != nil && setting.MusicRule != "" {
 		bgmPath = setting.MusicRule
