@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/go-audio/wav v1.1.0
 	github.com/go-ole/go-ole v1.3.0
 	github.com/spf13/viper v1.16.0
 	golang.org/x/image v0.11.0
@@ -15,6 +16,8 @@ require (
 
 require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
+	github.com/go-audio/audio v1.0.0 // indirect
+	github.com/go-audio/riff v1.0.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect

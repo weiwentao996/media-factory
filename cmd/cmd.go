@@ -6,6 +6,7 @@ import (
 	"github.com/weiwentao996/media-factory/lib/img"
 	"github.com/weiwentao996/media-factory/lib/video"
 	"github.com/weiwentao996/media-factory/lib/voice"
+	"math"
 	"os"
 	"time"
 )
@@ -20,22 +21,26 @@ func GenVideoWithSetting(essay []common.PageData, outPath string, setting *commo
 
 	counter := 0
 	allFpsCount := 0
-
-	for _, e := range essay {
+	var voiceTime []int
+	for i, e := range essay {
+		_, t := voice.GenVoice(e.Content, path)
+		second := int(math.Ceil(t.Seconds())) - 1
+		essay[i].Style.LiveTime = second
+		voiceTime = append(voiceTime, second)
 		conf := common.GetConfig(setting, e)
 		allFpsCount += conf.FpsCount
 	}
 
 	var voices []string
 	for i, e := range essay {
-		conf := common.GetConfig(setting, e)
 		fmt.Printf("\033[1;32;42m%s%d%s\n", "正在生成第 ", i+1, " 幕视频帧......")
+		conf := common.GetConfig(setting, e)
 		voices = append(voices, e.Content...)
 		img.GenImage(path, e, counter, allFpsCount, setting)
 		counter += conf.FpsCount
 	}
 	fmt.Printf("\033[1;32;42m%s\n", "正在生成音频......")
-	genVoice := voice.GenVoice(voices, path)
+	genVoice, _ := voice.GenVoice(voices, path)
 	fpsRate := 8.0
 	if setting.FpsRate != 0 {
 		fpsRate = setting.FpsRate

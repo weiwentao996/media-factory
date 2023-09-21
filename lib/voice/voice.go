@@ -2,12 +2,14 @@ package voice
 
 import (
 	"fmt"
+	"github.com/go-audio/wav"
 	"github.com/go-ole/go-ole"
 	"github.com/go-ole/go-ole/oleutil"
+	"os"
 	"time"
 )
 
-func GenVoice(contents []string, path string) string {
+func GenVoice(contents []string, path string) (string, time.Duration) {
 	ole.CoInitialize(0)
 	unknown, _ := oleutil.CreateObject("SAPI.SpVoice")
 	voice, _ := unknown.QueryInterface(ole.IID_IDispatch)
@@ -19,7 +21,7 @@ func GenVoice(contents []string, path string) string {
 	// 设置voice的AudioOutputStream属性，必须是PutPropertyRef，如果是PutProperty就无法生效
 	oleutil.PutPropertyRef(voice, "AudioOutputStream", ff)
 	// 设置语速
-	oleutil.PutProperty(voice, "Rate", 4)
+	oleutil.PutProperty(voice, "Rate", 2)
 	// 设置音量
 	oleutil.PutProperty(voice, "Volume", 200)
 	// 说话
@@ -46,8 +48,32 @@ func GenVoice(contents []string, path string) string {
 	oleutil.CallMethod(voice, "WaitUntilDone", 1000000)
 	// 关闭文件
 	oleutil.CallMethod(ff, "Close")
+	duration, err := getWavDuration(fileName)
+	if err != nil {
+		panic(err)
+	}
 	ff.Release()
 	voice.Release()
 	ole.CoUninitialize()
-	return fileName
+	return fileName, duration
+}
+
+func getWavDuration(fileName string) (time.Duration, error) {
+	// 打开.wav文件
+	file, err := os.Open(fileName)
+	if err != nil {
+		return 0, err
+	}
+	defer file.Close()
+
+	// 创建一个.wav解码器
+	decoder := wav.NewDecoder(file)
+
+	// 读取.wav文件的元数据信息
+	_, err = decoder.Seek(0, 0)
+	if err != nil {
+		return 0, err
+	}
+
+	return decoder.Duration()
 }

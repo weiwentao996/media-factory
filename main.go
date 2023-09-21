@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/viper"
 	"github.com/weiwentao996/media-factory/cmd"
 	"github.com/weiwentao996/media-factory/lib/common"
-	"github.com/weiwentao996/media-factory/lib/voice"
 	"os"
 )
 
@@ -14,7 +13,6 @@ type Essay struct {
 }
 
 func main() {
-	voice.GenVoice([]string{"你好", "很好", "很棒"}, "./")
 	essay := Essay{}
 	content := viper.New()
 	content.AddConfigPath("./")      //设置读取的文件路径
@@ -40,7 +38,7 @@ func main() {
 
 	fmt.Printf("\033[1;32;42m%s\n", "读取文件成功!")
 	//cmd.GenVideo(essay.Page, "./sources/output")
-	cmd.GenVideoWithSetting(essay.Page, "C:\\Users\\Tao\\Desktop\\output", &common.Setting{
+	cmd.GenVideoWithSetting(essay.Page, "./output", &common.Setting{
 		FpsRate:         6,
 		HighPerformance: true,
 	})
