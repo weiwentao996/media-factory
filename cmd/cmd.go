@@ -5,6 +5,7 @@ import (
 	"github.com/weiwentao996/media-factory/lib/common"
 	"github.com/weiwentao996/media-factory/lib/img"
 	"github.com/weiwentao996/media-factory/lib/video"
+	"github.com/weiwentao996/media-factory/lib/voice"
 	"os"
 	"time"
 )
@@ -25,13 +26,16 @@ func GenVideoWithSetting(essay []common.PageData, outPath string, setting *commo
 		allFpsCount += conf.FpsCount
 	}
 
+	var voices []string
 	for i, e := range essay {
 		conf := common.GetConfig(setting, e)
 		fmt.Printf("\033[1;32;42m%s%d%s\n", "正在生成第 ", i+1, " 幕视频帧......")
+		voices = append(voices, e.Content...)
 		img.GenImage(path, e, counter, allFpsCount, setting)
 		counter += conf.FpsCount
 	}
-
+	fmt.Printf("\033[1;32;42m%s\n", "正在生成音频......")
+	genVoice := voice.GenVoice(voices, path)
 	fpsRate := 8.0
 	if setting.FpsRate != 0 {
 		fpsRate = setting.FpsRate
@@ -43,7 +47,7 @@ func GenVideoWithSetting(essay []common.PageData, outPath string, setting *commo
 	}
 
 	fmt.Printf("\033[1;32;42m%s\n", "正在合成视频......")
-	bgmPath := ""
+	bgmPath := genVoice
 
 	if setting != nil && setting.MusicRule != "" {
 		bgmPath = setting.MusicRule

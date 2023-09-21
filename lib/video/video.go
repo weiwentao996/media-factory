@@ -57,27 +57,45 @@ func SingleImageToVideo(imgPath, outPath string) error {
 func MultiImageToVideo(imgPathRule, bgmPath, outPath string, fps float64, maxTime float64) error {
 	// video -r 0.1  -f image2 -i ./sources/img/%d.jpg  -s 640x480 ./sources/video/output.mp4
 	cmd := exec.Command("ffmpeg", "-r", fmt.Sprintf("%f", fps), "-f", "image2", "-i", imgPathRule, "-i", bgmPath, "-t", fmt.Sprintf("%f", maxTime), "-pix_fmt", "yuv420p", outPath+"/video.mp4", "-y")
+	fmt.Println(cmd.String())
 	// 获取输出管道
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		return err
 	}
 
-	// 开始执行命令
-	if err := cmd.Start(); err != nil {
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
 		return err
 	}
 
-	// 读取输出
-	go func() {
-		if _, err := io.Copy(os.Stdout, stdout); err != nil {
-			return
-		}
-	}()
+	err = cmd.Start()
+	if err != nil {
+		fmt.Println("Error starting command:", err)
+		return err
+	}
+
+	go copyOutput(stdout)
+	go copyOutput(stderr)
 
 	// 等待命令执行完成
 	if err := cmd.Wait(); err != nil {
 		return err
 	}
 	return nil
+}
+
+func copyOutput(r io.Reader) {
+	buf := make([]byte, 1024)
+	for {
+		n, err := r.Read(buf)
+		if err != nil && err != io.EOF {
+			fmt.Println("Error reading from pipe:", err)
+			break
+		}
+		if n == 0 {
+			break
+		}
+		fmt.Print(string(buf[:n]))
+	}
 }
