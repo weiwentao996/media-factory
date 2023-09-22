@@ -125,7 +125,7 @@ func GenImage(outPath string, data common.PageData, counter, allFpsCount int, se
 		x, y = (Width-sWidth)/2, sHeight+offsetY
 	}
 
-	rectColor := color.RGBA{0, 47, 167, 100} // 背景色
+	rectColor := color.RGBA{0, 0, 0, 120} // 背景色
 	dc.SetColor(rectColor)
 	dc.DrawRectangle(x, y-0.9*sHeight, sWidth, sHeight*1.2)
 	dc.Fill()

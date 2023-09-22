@@ -19,7 +19,7 @@ type Style struct {
 	Title      TitleStyle   `json:"title" mapstructure:"title"`
 	Content    ContentStyle `json:"content" mapstructure:"content"`
 	Background string       `json:"background" mapstructure:"background"`
-	LiveTime   int          `json:"live_time" mapstructure:"live_time"`
+	LiveTime   float64      `json:"live_time" mapstructure:"live_time"`
 }
 
 type TitleStyle struct {
@@ -41,8 +41,8 @@ type Color struct {
 
 var (
 	FpsCount   = 24       // 每幅图帧率
-	Black      = 4        // 留白
-	Start      = 12       // 开场透明结束帧
+	Black      = 0        // 留白
+	Start      = 6        // 开场透明结束帧
 	End        = FpsCount // 结束透明开始帧
 	JumpHeight = 6        // 进度条跳的高度
 	JumpRate   = 6        // 进度条跳的频率，每JumpRate帧完成一次跳跃
@@ -66,7 +66,7 @@ func GetConfig(setting *Setting, data PageData) VideoConfig {
 	}
 
 	if data.Style.LiveTime != 0 && setting.FpsRate != 0 {
-		FpsCount = int(float64(data.Style.LiveTime) * setting.FpsRate)
+		FpsCount = int(data.Style.LiveTime * setting.FpsRate)
 		End = FpsCount
 	}
 
