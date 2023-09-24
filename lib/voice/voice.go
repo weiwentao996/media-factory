@@ -2,10 +2,8 @@ package voice
 
 import (
 	"fmt"
-	"github.com/go-audio/wav"
 	"github.com/go-ole/go-ole"
 	"github.com/go-ole/go-ole/oleutil"
-	"os"
 	"time"
 )
 
@@ -48,7 +46,7 @@ func GenVoice(contents []string, path string) (string, time.Duration) {
 	oleutil.CallMethod(voice, "WaitUntilDone", 1000000)
 	// 关闭文件
 	oleutil.CallMethod(ff, "Close")
-	duration, err := getWavDuration(fileName)
+	duration, err := GetWavDuration(fileName)
 	if err != nil {
 		panic(err)
 	}
@@ -56,24 +54,4 @@ func GenVoice(contents []string, path string) (string, time.Duration) {
 	voice.Release()
 	ole.CoUninitialize()
 	return fileName, duration
-}
-
-func getWavDuration(fileName string) (time.Duration, error) {
-	// 打开.wav文件
-	file, err := os.Open(fileName)
-	if err != nil {
-		return 0, err
-	}
-	defer file.Close()
-
-	// 创建一个.wav解码器
-	decoder := wav.NewDecoder(file)
-
-	// 读取.wav文件的元数据信息
-	_, err = decoder.Seek(0, 0)
-	if err != nil {
-		return 0, err
-	}
-
-	return decoder.Duration()
 }

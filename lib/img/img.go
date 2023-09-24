@@ -87,7 +87,7 @@ func LoadFontFace(fontBytes []byte, points float64) (font.Face, error) {
 	return face, nil
 }
 
-func GenImage(outPath string, data common.PageData, counter, allFpsCount int, setting *common.Setting) {
+func GenPPTImage(outPath string, data common.PageData, counter, allFpsCount int, setting *common.PPTSetting) {
 	conf := common.GetConfig(setting, data)
 	dc := gg.NewContext(Width, Height)
 	offsetY := 10.0
@@ -234,7 +234,7 @@ func GenImage(outPath string, data common.PageData, counter, allFpsCount int, se
 			go func(fpsIndex int, counter int) {
 				bgc := gg.NewContextForImage(bg)
 				if bgImg != nil {
-					putImage(bgc, bgImg)
+					putBackGroundImage(bgc, bgImg)
 				}
 				bgc.DrawImage(proImage, int(float64(Width)*(float64(counter)/float64(allFpsCount))), Height-(128+(conf.JumpRate-fpsIndex%conf.JumpRate)*(conf.JumpHeight/conf.JumpRate)))
 				switch {
@@ -263,7 +263,7 @@ func GenImage(outPath string, data common.PageData, counter, allFpsCount int, se
 			proImage := processList.GetProcess()
 			bgc := gg.NewContextForImage(bg)
 			if bgImg != nil {
-				putImage(bgc, bgImg)
+				putBackGroundImage(bgc, bgImg)
 			}
 			bgc.DrawImage(proImage, int(float64(Width)*(float64(counter+i)/float64(allFpsCount))), Height-(128+(conf.JumpRate-i%conf.JumpRate)*(conf.JumpHeight/conf.JumpRate)))
 			switch {
@@ -303,6 +303,129 @@ func GetImage(path string) (image.Image, error) {
 	return bg, nil
 }
 
+func GenAdviceImage(outPath string, data *common.VttContent, videoEndTime float64, counter int, setting *common.AdviceFoSetting, style *common.AdviceFoStyle) int {
+	dc := gg.NewContext(Width, Height)
+
+	titleFrontBytes, err := sources.Sources.ReadFile("fronts/Aa厚底黑.ttf")
+	if err != nil {
+		panic(err)
+	}
+
+	face, err := LoadFontFace(titleFrontBytes, style.Size)
+	if err != nil {
+		panic(err)
+	}
+
+	dc.SetFontFace(face)
+
+	if style.Color != nil {
+		dc.SetRGB255(style.Color.R, style.Color.G, style.Color.B)
+	}
+
+	sWidth, sHeight := dc.MeasureString(data.Content)
+
+	offsetY := Height - sHeight - 200
+	var x, y float64
+	switch strings.ToLower(style.Align) {
+	case "left":
+		x, y = 0, sHeight+offsetY
+	case "right":
+		x, y = Width-sWidth, sHeight+offsetY
+	case "center":
+		x, y = (Width-sWidth)/2, sHeight+offsetY
+	default:
+		x, y = (Width-sWidth)/2, sHeight+offsetY
+	}
+
+	rectColor := color.RGBA{249, 205, 173, 100} // 背景色
+	dc.SetColor(rectColor)
+	dc.DrawRectangle(x, y-0.9*sHeight, sWidth, sHeight*1.2)
+	dc.Fill()
+
+	if style.Color == nil {
+		dc.SetRGB255(237, 90, 101)
+	}
+
+	if style.Color != nil {
+		dc.SetRGB255(style.Color.R, style.Color.G, style.Color.B)
+	}
+
+	dc.DrawString(data.Content, x, y)
+
+	imageBytes, err := sources.Sources.ReadFile("img/BG.png")
+	if err != nil {
+		panic(err)
+	}
+	reader := bytes.NewReader(imageBytes)
+	bg, _, err := image.Decode(reader)
+	if err != nil {
+		panic(err)
+	}
+
+	var bgImg image.Image
+	if style.Background != "" {
+		bgImg, err = GetImage(style.Background)
+		if err != nil {
+			panic(err)
+		}
+		//bgImg = adjustOpacity(bgImg, 0.3)
+	}
+
+	var conetentImage image.Image
+	if style.Background != "" {
+		conetentImage, err = GetImage(data.ContentImage)
+		if err != nil {
+			panic(err)
+		}
+		//bgImg = adjustOpacity(bgImg, 0.3)
+	}
+
+	processList := NewCircularLinkedList()
+
+	for i := 0; i < 12; i++ {
+		imageBytes, err = sources.Sources.ReadFile(fmt.Sprintf("img/bugs/process%d.png", i))
+		if err != nil {
+			panic(err)
+		}
+		reader = bytes.NewReader(imageBytes)
+		p, _, err := image.Decode(reader)
+		if err != nil {
+			panic(err)
+		}
+
+		processList.Insert(p)
+	}
+
+	fpsCount := int(math.Ceil((data.Time[1] - data.Time[0]) * setting.FpsRate))
+	// 多线程
+	wg := sync.WaitGroup{}
+	wg.Add(fpsCount)
+	for i := 0; i < fpsCount; i++ {
+		var proImage image.Image
+		proImage = processList.GetProcess()
+		allProcessPercentage := (data.Time[0] + (float64(i) / setting.FpsRate)) / videoEndTime
+		go func(pageIndex int) {
+			bgc := gg.NewContextForImage(bg)
+			if bgImg != nil {
+				putBackGroundImage(bgc, bgImg)
+			}
+			if conetentImage != nil {
+				putContentImage(bgc, conetentImage)
+			}
+			bgc.DrawImage(proImage, int(float64(Width)*allProcessPercentage), Height-128)
+			bgc.DrawImage(dc.Image(), 0, int(sHeight))
+			fileName := fmt.Sprintf("%s/%05d.png", outPath, pageIndex)
+			if err := bgc.SavePNG(fileName); err != nil {
+				panic(err)
+			}
+			wg.Done()
+		}(counter)
+		counter++
+	}
+	wg.Wait()
+	return counter
+}
+
 // GetImageFromNet 从远程读取图片
 func getImageFromNet(url string) (image.Image, error) {
 	res, err := http.Get(url)
@@ -333,7 +456,7 @@ func adjustOpacity(m image.Image, percentage float64) image.Image {
 	return newRgba
 }
 
-func putImage(dc *gg.Context, newBg image.Image) error {
+func putBackGroundImage(dc *gg.Context, newBg image.Image) error {
 
 	// 设置背景颜色
 	//dc.SetColor(color.White)
@@ -363,6 +486,31 @@ func putImage(dc *gg.Context, newBg image.Image) error {
 
 	// 将图片绘制到背景中央
 	dc.DrawImage(newBgC.Image(), int(xOffset), int(yOffset))
+
+	return nil
+}
+
+func putContentImage(dc *gg.Context, img image.Image) error {
+
+	// 计算图片缩放比例
+	scale := float64(Height-200) / float64(img.Bounds().Dy())
+
+	// 计算缩放后图片的宽度和高度
+	scaledWidth := float64(img.Bounds().Dx()) * scale
+	scaledHeight := float64(img.Bounds().Dy()) * scale
+
+	// 计算图片在背景中居中的位置
+	xOffset := (float64(Width) - scaledWidth) / 2
+
+	// 创建一个新的绘图上下文
+	newBgC := gg.NewContext(int(scaledWidth), int(scaledHeight))
+
+	// 缩放并绘制图像
+	newBgC.Scale(scale, scale)
+	newBgC.DrawImage(img, 0, 0)
+
+	// 将图片绘制到背景中央
+	dc.DrawImage(newBgC.Image(), int(xOffset), 0)
 
 	return nil
 }

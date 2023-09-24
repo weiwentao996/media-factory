@@ -2,7 +2,7 @@ package common
 
 import "math"
 
-type Setting struct {
+type PPTSetting struct {
 	FpsRate         float64 `json:"fps_rate"`
 	MaxTime         float64 `json:"max_time"`
 	MusicRule       string  `json:"music_rule"`
@@ -12,22 +12,39 @@ type Setting struct {
 type PageData struct {
 	Title   string   `json:"title" mapstructure:"title"`
 	Content []string `json:"content" mapstructure:"content"`
-	Style   Style    `json:"style" mapstructure:"style"`
+	Style   PPTStyle `json:"style" mapstructure:"style"`
 }
 
-type Style struct {
-	Title      TitleStyle   `json:"title" mapstructure:"title"`
-	Content    ContentStyle `json:"content" mapstructure:"content"`
-	Background string       `json:"background" mapstructure:"background"`
-	LiveTime   float64      `json:"live_time" mapstructure:"live_time"`
+type VttContent struct {
+	Content      string     `json:"content" mapstructure:"content"`
+	ContentImage string     `json:"content_image" mapstructure:"content_image"`
+	Time         [2]float64 `json:"time" mapstructure:"time"`
 }
 
-type TitleStyle struct {
+type AdviceFoSetting struct {
+	FpsRate float64 `json:"fps_rate"`
+}
+
+type AdviceFoStyle struct {
+	Align      string  `json:"align" mapstructure:"align"`
+	Size       float64 `json:"size" mapstructure:"size"`
+	Color      *Color  `json:"color" mapstructure:"color"`
+	Background string  `json:"background" mapstructure:"background"`
+}
+
+type PPTStyle struct {
+	Title      PPTTitleStyle   `json:"title" mapstructure:"title"`
+	Content    PPTContentStyle `json:"content" mapstructure:"content"`
+	Background string          `json:"background" mapstructure:"background"`
+	LiveTime   float64         `json:"live_time" mapstructure:"live_time"`
+}
+
+type PPTTitleStyle struct {
 	Align string  `json:"align" mapstructure:"align"`
 	Size  float64 `json:"size" mapstructure:"size"`
 	Color *Color  `json:"color" mapstructure:"color"`
 }
-type ContentStyle struct {
+type PPTContentStyle struct {
 	Align string  `json:"align" mapstructure:"align"`
 	Size  float64 `json:"size" mapstructure:"size"`
 	Color *Color  `json:"color" mapstructure:"color"`
@@ -59,7 +76,7 @@ type VideoConfig struct {
 	WalkRate   int `json:"walk_rate"`   // 进度条步行的频率，每WalkRate帧完成一次跳跃
 }
 
-func GetConfig(setting *Setting, data PageData) VideoConfig {
+func GetConfig(setting *PPTSetting, data PageData) VideoConfig {
 	if setting != nil && setting.FpsRate != 0 {
 		FpsCount = int(math.Ceil(setting.FpsRate)) * len(data.Content)
 		End = FpsCount
