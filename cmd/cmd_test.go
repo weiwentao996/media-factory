@@ -93,7 +93,7 @@ func TestGenAdviceVideoWithSetting(t *testing.T) {
 			G: 255,
 			B: 255,
 		},
-	})
+	}, "token")
 	fmt.Printf("按任意键结束 ...")
 	endKey := make([]byte, 1)
 	os.Stdin.Read(endKey)

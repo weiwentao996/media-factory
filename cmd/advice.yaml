@@ -8,7 +8,8 @@ page:
   -
     content: 1就发嘀咕
     content_image: https://img.iuhub.cn/doutu/%E6%8B%89%E5%B7%B4%E5%B7%B4/20151206369384_GUrBFn.jpg
-  - content: 2阿斯顿发多少个
+  -
+    content: 2阿斯顿发多少个
     content_image: https://img.iuhub.cn/doutu/%E6%8B%89%E5%B7%B4%E5%B7%B4/20151206369384_GUrBFn.jpg’
   -
     content: 3去微软

@@ -1,6 +1,7 @@
 package voice
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/go-audio/wav"
 	"github.com/weiwentao996/media-factory/lib/common"
@@ -74,6 +75,42 @@ func countFiles(pattern string) int {
 }
 
 func GenEdgeVoice(content []string, outPath string) ([]common.VttContent, error) {
+	// video -r 0.1  -f image2 -i ./sources/img/%d.jpg  -s 640x480 ./sources/video/output.mp4
+	cmd := exec.Command("edge-tts", "--voice", "zh-CN-XiaoyiNeural", "--text", strings.Join(content, "。"), "--write-media", outPath, "--write-subtitles", outPath+".vtt")
+	fmt.Println(cmd.String())
+	// 获取输出管道
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return nil, err
+	}
+
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		return nil, err
+	}
+
+	err = cmd.Start()
+	if err != nil {
+		return nil, err
+	}
+
+	go copyOutput(stdout)
+	go copyOutput(stderr)
+
+	// 等待命令执行完成
+	if err := cmd.Wait(); err != nil {
+		return nil, err
+	}
+
+	vtt, err := ReadVtt(outPath + ".vtt")
+	if err != nil {
+		return nil, err
+	}
+
+	return vtt, nil
+}
+
+func GenEdgeVoiceOnly(content []string, outPath string) ([]common.VttContent, error) {
 	// video -r 0.1  -f image2 -i ./sources/img/%d.jpg  -s 640x480 ./sources/video/output.mp4
 	cmd := exec.Command("edge-tts", "--voice", "zh-CN-XiaoyiNeural", "--text", strings.Join(content, "。"), "--write-media", outPath, "--write-subtitles", outPath+".vtt")
 	fmt.Println(cmd.String())
@@ -188,4 +225,44 @@ func copyOutput(r io.Reader) {
 		}
 		fmt.Print(string(buf[:n]))
 	}
+}
+
+type EdgeTtsRsp struct {
+	Voice string              `json:"voice"`
+	Vtt   []common.VttContent `json:"vtt"`
+}
+
+func GenEdgeVoiceOnline(content []string, outPath string, token *string) []common.VttContent {
+	// 要发送的数据
+	requestData := map[string]interface{}{
+		"content":  content,
+		"out_path": "./output.wav",
+	}
+
+	// 目标 URL
+	url := "http://1.15.92.254:8899/edge"
+
+	ms, err := json.Marshal(requestData)
+	if err != nil {
+		panic(err)
+	}
+	// 执行 POST 请求
+	response, err := httpPost(url, ms, token)
+	if err != nil {
+		panic(err)
+	}
+	defer response.Body.Close()
+
+	// 处理响应
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("HTTP 响应状态码:", response.Status)
+	rsp := EdgeTtsRsp{}
+
+	json.Unmarshal(responseBody, &rsp)
+	base64ToWAV(rsp.Voice, outPath)
+	return rsp.Vtt
 }

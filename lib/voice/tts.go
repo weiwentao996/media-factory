@@ -44,7 +44,7 @@ func CalVoiceTime(content []string, output string) float64 {
 	url := "http://1.15.92.254:8887/paddlespeech/tts"
 
 	// 执行 POST 请求
-	response, err := httpPost(url, requestData)
+	response, err := httpPost(url, requestData, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -78,7 +78,7 @@ func GetVoiceTTS(content []string, output string) float64 {
 	url := "http://1.15.92.254:8887/paddlespeech/tts"
 
 	// 执行 POST 请求
-	response, err := httpPost(url, requestData)
+	response, err := httpPost(url, requestData, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -101,7 +101,7 @@ func GetVoiceTTS(content []string, output string) float64 {
 }
 
 // httpPost 执行 HTTP POST 请求
-func httpPost(url string, data []byte) (*http.Response, error) {
+func httpPost(url string, data []byte, token *string) (*http.Response, error) {
 	// 创建请求
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
 	if err != nil {
@@ -110,6 +110,7 @@ func httpPost(url string, data []byte) (*http.Response, error) {
 
 	// 设置请求头
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+*token)
 
 	// 执行请求
 	client := &http.Client{}
