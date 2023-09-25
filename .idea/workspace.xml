@@ -5,19 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5f696cbc-a360-476c-8cdb-c337bcbf2a1b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/cmd/advice.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/cmd_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/ppt.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/img/img_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/voice/edgetts.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/voice/edgetts_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/advice.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/advice.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/cmd.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/cmd.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/content.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/content.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/common/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/lib/common/common.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/img/img.go" beforeDir="false" afterPath="$PROJECT_DIR$/lib/img/img.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/voice/voice.go" beforeDir="false" afterPath="$PROJECT_DIR$/lib/voice/voice.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,27 +34,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.format.on.save.advertiser.fired": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "C:/Work/media-factory/cmd",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.format.on.save.advertiser.fired&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Work/media-factory/cmd&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Work\media-factory\cmd" />
@@ -79,7 +70,19 @@
       <recent name="C:\work\media-factory\sources\img\mla" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd">
+  <component name="RunManager" selected="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (1)">
+    <configuration name="TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (1)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="media-factory" />
+      <working_directory value="$PROJECT_DIR$/cmd" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="github.com/weiwentao996/media-factory/cmd" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestGenAdviceVideoWithSetting\E$" />
+      <method v="2" />
+    </configuration>
     <configuration name="TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="media-factory" />
       <working_directory value="$PROJECT_DIR$/cmd" />
@@ -128,25 +131,13 @@
       <pattern value="^\QTestMultiImageToVideo\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestMultiImageToVideo in github.com/weiwentao996/media-factory/lib/video" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="media-factory" />
-      <working_directory value="$PROJECT_DIR$/lib/video" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/weiwentao996/media-factory/lib/video" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestMultiImageToVideo\E$" />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (1)" />
         <item itemvalue="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd" />
         <item itemvalue="Go Test.TestGenBanFoImage in github.com/weiwentao996/media-factory/lib/img (1)" />
         <item itemvalue="Go Test.TestGenBanFoImage in github.com/weiwentao996/media-factory/lib/img" />
         <item itemvalue="Go Test.TestMultiImageToVideo in github.com/weiwentao996/media-factory/cmd" />
-        <item itemvalue="Go Test.TestMultiImageToVideo in github.com/weiwentao996/media-factory/lib/video" />
       </list>
     </recent_temporary>
   </component>
@@ -182,29 +173,9 @@
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/lib/voice/edgetts.go</url>
-          <line>100</line>
-          <option name="timeStamp" value="22" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/lib/voice/edgetts.go</url>
-          <line>105</line>
-          <option name="timeStamp" value="23" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/lib/voice/edgetts.go</url>
-          <line>92</line>
-          <option name="timeStamp" value="24" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/lib/voice/edgetts.go</url>
-          <line>87</line>
-          <option name="timeStamp" value="25" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/lib/voice/edgetts.go</url>
-          <line>82</line>
-          <option name="timeStamp" value="26" />
+          <url>file://$PROJECT_DIR$/cmd/cmd.go</url>
+          <line>123</line>
+          <option name="timeStamp" value="36" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

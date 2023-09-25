@@ -96,7 +96,7 @@ func GenAdviceVideoWithSetting(advice []common.VttContent, outPath string, setti
 			vtt[j].Time[1] = vtt[j].Time[1] + preTime
 		}
 
-		preTime += vtt[len(vtt)-1].Time[1]
+		preTime = vtt[len(vtt)-1].Time[1]
 		advicePage = append(advicePage, vtt...)
 	}
 

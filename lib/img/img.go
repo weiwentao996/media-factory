@@ -396,7 +396,7 @@ func GenAdviceImage(outPath string, data *common.VttContent, videoEndTime float6
 		processList.Insert(p)
 	}
 
-	fpsCount := int(math.Ceil((data.Time[1] - data.Time[0]) * setting.FpsRate))
+	fpsCount := int(math.Ceil((data.Time[1] - data.Time[0] + 0.5) * setting.FpsRate))
 	// 多线程
 	wg := sync.WaitGroup{}
 	wg.Add(fpsCount)
@@ -404,7 +404,7 @@ func GenAdviceImage(outPath string, data *common.VttContent, videoEndTime float6
 		var proImage image.Image
 		proImage = processList.GetProcess()
 		allProcessPercentage := (data.Time[0] + (float64(i) / setting.FpsRate)) / videoEndTime
-		go func(pageIndex int) {
+		go func(pageIndex int, process float64) {
 			bgc := gg.NewContextForImage(bg)
 			if bgImg != nil {
 				putBackGroundImage(bgc, bgImg)
@@ -412,14 +412,14 @@ func GenAdviceImage(outPath string, data *common.VttContent, videoEndTime float6
 			if conetentImage != nil {
 				putContentImage(bgc, conetentImage)
 			}
-			bgc.DrawImage(proImage, int(float64(Width)*allProcessPercentage), Height-128)
+			bgc.DrawImage(proImage, int(float64(Width)*process), Height-128)
 			bgc.DrawImage(dc.Image(), 0, int(sHeight))
 			fileName := fmt.Sprintf("%s/%05d.png", outPath, pageIndex)
 			if err := bgc.SavePNG(fileName); err != nil {
 				panic(err)
 			}
 			wg.Done()
-		}(counter)
+		}(counter, allProcessPercentage)
 		counter++
 	}
 	wg.Wait()
