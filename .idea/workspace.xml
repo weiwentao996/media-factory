@@ -6,12 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="5f696cbc-a360-476c-8cdb-c337bcbf2a1b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/advice.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/advice.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/cmd.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/cmd.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/cmd_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/cmd_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/voice/edgetts.go" beforeDir="false" afterPath="$PROJECT_DIR$/lib/voice/edgetts.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/voice/edgetts_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/lib/voice/edgetts_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/voice/tts.go" beforeDir="false" afterPath="$PROJECT_DIR$/lib/voice/tts.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +70,7 @@
       <recent name="C:\work\media-factory\sources\img\mla" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (2)">
+  <component name="RunManager" selected="Go Test.TestMergeWAV in github.com/weiwentao996/media-factory/lib/voice">
     <configuration name="TestBase64ToWav in github.com/weiwentao996/media-factory/lib/voice" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="media-factory" />
       <working_directory value="$PROJECT_DIR$/lib/voice" />
@@ -110,18 +107,6 @@
       <pattern value="^\QTestGenAdviceVideoWithSetting\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="media-factory" />
-      <working_directory value="$PROJECT_DIR$/cmd" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/weiwentao996/media-factory/cmd" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestGenAdviceVideoWithSetting\E$" />
-      <method v="2" />
-    </configuration>
     <configuration name="TestGenEdgeVoiceOnline in github.com/weiwentao996/media-factory/lib/voice" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="media-factory" />
       <working_directory value="$PROJECT_DIR$/lib/voice" />
@@ -134,13 +119,25 @@
       <pattern value="^\QTestGenEdgeVoiceOnline\E$" />
       <method v="2" />
     </configuration>
+    <configuration name="TestMergeWAV in github.com/weiwentao996/media-factory/lib/voice" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="media-factory" />
+      <working_directory value="$PROJECT_DIR$/lib/voice" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="github.com/weiwentao996/media-factory/lib/voice" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestMergeWAV\E$" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestMergeWAV in github.com/weiwentao996/media-factory/lib/voice" />
         <item itemvalue="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (2)" />
         <item itemvalue="Go Test.TestGenEdgeVoiceOnline in github.com/weiwentao996/media-factory/lib/voice" />
         <item itemvalue="Go Test.TestBase64ToWav in github.com/weiwentao996/media-factory/lib/voice" />
         <item itemvalue="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (1)" />
-        <item itemvalue="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd" />
       </list>
     </recent_temporary>
   </component>

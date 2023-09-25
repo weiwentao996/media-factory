@@ -33,3 +33,8 @@ func TestGenEdgeVoiceOnline(t *testing.T) {
 	online := GenEdgeVoiceOnline([]string{"你好", "hello", "我是个男孩"}, "./a.wav", nil)
 	fmt.Println(online)
 }
+
+func TestMergeWAV(t *testing.T) {
+	err := MergeWAV("C:\\Users\\weiwentao\\Desktop\\output\\1695623347\\*.wav", "C:\\Users\\weiwentao\\Desktop\\output\\1695623347")
+	fmt.Println(err)
+}

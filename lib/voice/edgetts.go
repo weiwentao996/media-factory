@@ -232,9 +232,10 @@ type EdgeTtsRsp struct {
 	Vtt   []common.VttContent `json:"vtt"`
 }
 
-func GenEdgeVoiceOnline(content []string, outPath string, token *string) []common.VttContent {
+func GenEdgeVoiceOnline(content []string, voiceType, outPath string, token *string) []common.VttContent {
 	// 要发送的数据
 	requestData := map[string]interface{}{
+		"voice":    voiceType,
 		"content":  content,
 		"out_path": "./output.wav",
 	}

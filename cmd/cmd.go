@@ -73,7 +73,7 @@ func GenPPTVideoWithSetting(essay []common.PageData, outPath string, setting *co
 }
 
 // GenAdviceVideoWithSetting 配置生成Video
-func GenAdviceVideoWithSetting(advice []common.VttContent, outPath string, setting *common.AdviceFoSetting, style *common.AdviceFoStyle, token string) {
+func GenAdviceVideoWithSetting(advice []common.VttContent, voiceType, outPath string, setting *common.AdviceFoSetting, style *common.AdviceFoStyle, token string) {
 	fmt.Printf("\033[1;32;42m%s\n", "开始生成视频!")
 	path := fmt.Sprintf("%s/%d", outPath, time.Now().Unix())
 	if err := os.MkdirAll(path, 0444); err != nil {
@@ -83,8 +83,8 @@ func GenAdviceVideoWithSetting(advice []common.VttContent, outPath string, setti
 	var advicePage []common.VttContent
 	var preTime float64
 	for i, e := range advice {
-		bgmPath := fmt.Sprintf("%s/%d.wav", path, i)
-		vtt := voice.GenEdgeVoiceOnline([]string{e.Content}, bgmPath, &token)
+		bgmPath := fmt.Sprintf("%s/%05d.wav", path, i)
+		vtt := voice.GenEdgeVoiceOnline([]string{e.Content}, voiceType, bgmPath, &token)
 		for j := 0; j < len(vtt); j++ {
 			vtt[j].ContentImage = e.ContentImage
 			vtt[j].Content = strings.Replace(vtt[j].Content, " ", "", -1)
