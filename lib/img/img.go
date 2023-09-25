@@ -396,7 +396,7 @@ func GenAdviceImage(outPath string, data *common.VttContent, videoEndTime float6
 		processList.Insert(p)
 	}
 
-	fpsCount := int(math.Ceil((data.Time[1] - data.Time[0] + setting.FpsFix) * setting.FpsRate))
+	fpsCount := int(math.Round((data.Time[1] - data.Time[0] + setting.FpsFix) * setting.FpsRate))
 	// 多线程
 	wg := sync.WaitGroup{}
 	wg.Add(fpsCount)
