@@ -23,6 +23,7 @@ type VttContent struct {
 
 type AdviceFoSetting struct {
 	FpsRate float64 `json:"fps_rate"`
+	FpsFix  float64 `json:"fps_fix"`
 }
 
 type AdviceFoStyle struct {
