@@ -74,50 +74,32 @@ func GenPPTVideoWithSetting(essay []common.PageData, outPath string, setting *co
 
 // GenAdviceVideoWithSetting 配置生成Video
 func GenAdviceVideoWithSetting(advice []common.VttContent, voiceType, outPath string, setting *common.AdviceFoSetting, style *common.AdviceFoStyle, token string) {
+	if setting.FpsRate == 0 {
+		setting.FpsRate = 6.0
+	}
 	fmt.Printf("\033[1;32;42m%s\n", "开始生成视频!")
 	path := fmt.Sprintf("%s/%d", outPath, time.Now().Unix())
 	if err := os.MkdirAll(path, 0444); err != nil {
 		panic(err)
 	}
-
-	var advicePage []common.VttContent
-	var preTime float64
-	for i, e := range advice {
-		bgmPath := fmt.Sprintf("%s/%05d.wav", path, i)
-		vtt := voice.GenEdgeVoiceOnline([]string{e.Content}, voiceType, bgmPath, &token)
-		for j := 0; j < len(vtt); j++ {
-			vtt[j].ContentImage = e.ContentImage
-			vtt[j].Content = strings.Replace(vtt[j].Content, " ", "", -1)
-			vtt[j].Time[0] = vtt[j].Time[0] + preTime
-			vtt[j].Time[1] = vtt[j].Time[1] + preTime
-		}
-
-		preTime = vtt[len(vtt)-1].Time[1]
-		advicePage = append(advicePage, vtt...)
+	bgmPath := fmt.Sprintf("%s/voice.wav", path)
+	var msg []string
+	for _, content := range advice {
+		msg = append(msg, content.Content)
 	}
+	vtt := voice.GenEdgeVoiceOnline(msg, voiceType, bgmPath, &token)
 
 	counter := 0
-	bgmPath := fmt.Sprintf("%s/voice.wav", path)
-
-	for i, e := range advicePage {
+	for i, content := range vtt {
 		fmt.Printf("\033[1;32;42m%s%d%s\n", "正在生成第 ", i+1, " 幕视频帧......")
-		counter = img.GenAdviceImage(path, &e, advicePage[len(advicePage)-1].Time[1]+1, counter, setting, style)
-	}
-
-	fmt.Printf("\033[1;32;42m%s\n", "正在生成音频......")
-	err := voice.MergeWAV(path+"/*.wav", bgmPath)
-	if err != nil {
-		panic(err)
-	}
-
-	fpsRate := 8.0
-	if setting.FpsRate != 0 {
-		fpsRate = setting.FpsRate
+		content.ContentImage = advice[(len(advice)/len(vtt))*i].ContentImage
+		content.Content = strings.Replace(content.Content, " ", "", -1)
+		counter = img.GenAdviceImage(path, &content, vtt[len(vtt)-1].Time[1]+1, counter, setting, style)
 	}
 
 	fmt.Printf("\033[1;32;42m%s\n", "正在合成视频......")
 
-	if err := video.MultiImageToVideo(path+"/%05d.png", bgmPath, path, fpsRate, (advicePage[len(advicePage)-1].Time[1]+1)*1000); err != nil {
+	if err := video.MultiImageToVideo(path+"/%05d.png", bgmPath, path, setting.FpsRate, (vtt[len(vtt)-1].Time[1]+1)*1000); err != nil {
 		panic(err)
 	}
 

@@ -82,7 +82,8 @@ func TestGenAdviceVideoWithSetting(t *testing.T) {
 
 	fmt.Printf("\033[1;32;42m%s\n", "读取文件成功!")
 	//cmd.GenVideo(essay.Page, "./sources/output")
-	GenAdviceVideoWithSetting(advice.Page, "../output", &common.AdviceFoSetting{
+	GenAdviceVideoWithSetting(advice.Page, "zh-CN-YunyangNeural", "../output", &common.AdviceFoSetting{
+		FpsFix:  0,
 		FpsRate: 6,
 	}, &common.AdviceFoStyle{
 		Align:      "center",
@@ -93,7 +94,7 @@ func TestGenAdviceVideoWithSetting(t *testing.T) {
 			G: 255,
 			B: 255,
 		},
-	}, "token")
+	}, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImF2YXRhciI6Imh0dHBzOi8vaW1nLml1aHViLmNuL3Vuc3BsYXNoL25hdHVyZS9waG90by0xNjkyMzAzNjEwMDc1LWJhZTU2MzI2MDMxMC5qcGciLCJwYXNzd29yZCI6IjEyMzQ1NiIsImV4cCI6MTY5NTcyNTQ4My41ODkzNzYsImlzcyI6Ind3dCJ9.RDftnO9rM54hPLeQXQnMnd59OYDibO7syzyOYRl-rsk")
 	fmt.Printf("按任意键结束 ...")
 	endKey := make([]byte, 1)
 	os.Stdin.Read(endKey)
