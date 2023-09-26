@@ -6,7 +6,6 @@ import (
 	"github.com/weiwentao996/media-factory/lib/img"
 	"github.com/weiwentao996/media-factory/lib/video"
 	"github.com/weiwentao996/media-factory/lib/voice"
-	"math"
 	"os"
 	"strings"
 	"time"
@@ -85,16 +84,25 @@ func GenAdviceVideoWithSetting(advice []common.VttContent, voiceType, outPath st
 	}
 	bgmPath := fmt.Sprintf("%s/voice.wav", path)
 	var msg []string
-	for _, content := range advice {
+	var preTime float64
+	var vtt []common.VttContent
+	for i, content := range advice {
+		cllVttList := voice.GenEdgeVoiceOnline([]string{content.Content}, voiceType, fmt.Sprintf("%s/%05d.wav", path, i), &token)
+		for _, cllVtt := range cllVttList {
+			cllVtt.ContentImage = content.ContentImage
+			cllVtt.Time[0] += preTime
+			cllVtt.Time[1] += preTime
+			vtt = append(vtt, cllVtt)
+			preTime = cllVtt.Time[1]
+		}
+
 		msg = append(msg, content.Content)
 	}
-	vtt := voice.GenEdgeVoiceOnline(msg, voiceType, bgmPath, &token)
 
+	voice.MergeWAV(fmt.Sprintf("%s/*.wav", path), bgmPath)
 	counter := 0
 	for i, content := range vtt {
 		fmt.Printf("\033[1;32;42m%s%d%s\n", "正在生成第 ", i+1, " 幕视频帧......")
-		num := int(math.Floor((float64(len(advice)) / float64(len(vtt))) * float64(i)))
-		content.ContentImage = advice[num].ContentImage
 		content.Content = strings.Replace(content.Content, " ", "", -1)
 		counter = img.GenAdviceImage(path, &content, vtt[len(vtt)-1].Time[1]+1, counter, setting, style)
 	}
