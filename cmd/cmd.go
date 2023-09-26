@@ -6,6 +6,7 @@ import (
 	"github.com/weiwentao996/media-factory/lib/img"
 	"github.com/weiwentao996/media-factory/lib/video"
 	"github.com/weiwentao996/media-factory/lib/voice"
+	"math"
 	"os"
 	"strings"
 	"time"
@@ -92,7 +93,8 @@ func GenAdviceVideoWithSetting(advice []common.VttContent, voiceType, outPath st
 	counter := 0
 	for i, content := range vtt {
 		fmt.Printf("\033[1;32;42m%s%d%s\n", "正在生成第 ", i+1, " 幕视频帧......")
-		content.ContentImage = advice[(len(advice)/len(vtt))*i].ContentImage
+		num := int(math.Floor((float64(len(advice)) / float64(len(vtt))) * float64(i)))
+		content.ContentImage = advice[num].ContentImage
 		content.Content = strings.Replace(content.Content, " ", "", -1)
 		counter = img.GenAdviceImage(path, &content, vtt[len(vtt)-1].Time[1]+1, counter, setting, style)
 	}
