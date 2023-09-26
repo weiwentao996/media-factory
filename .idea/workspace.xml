@@ -6,8 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="5f696cbc-a360-476c-8cdb-c337bcbf2a1b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/advice.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/advice.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/cmd.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/cmd.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/cmd_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/cmd_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +69,7 @@
       <recent name="C:\work\media-factory\sources\img\mla" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (1)">
+  <component name="RunManager" selected="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (3)">
     <configuration name="TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (1)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="media-factory" />
       <working_directory value="$PROJECT_DIR$/cmd" />
@@ -82,7 +82,7 @@
       <pattern value="^\QTestGenAdviceVideoWithSetting\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (2)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (3)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="media-factory" />
       <working_directory value="$PROJECT_DIR$/cmd" />
       <root_directory value="$PROJECT_DIR$" />
@@ -132,11 +132,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (3)" />
         <item itemvalue="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (1)" />
         <item itemvalue="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd" />
         <item itemvalue="Go Test.TestGenEdgeVoiceOnline in github.com/weiwentao996/media-factory/lib/voice (1)" />
         <item itemvalue="Go Test.TestMergeWAV in github.com/weiwentao996/media-factory/lib/voice" />
-        <item itemvalue="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (2)" />
       </list>
     </recent_temporary>
   </component>
@@ -171,16 +171,11 @@
           <line>26</line>
           <option name="timeStamp" value="13" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/cmd/cmd.go</url>
-          <line>103</line>
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/media_factory$TestGenAdviceVideoWithSetting_in_github_com_weiwentao996_media_factory_cmd__1_.out" NAME="TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (1) Coverage Results" MODIFIED="1695711324959" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
     <SUITE FILE_PATH="coverage/media_factory$TestMergeMp3_in_github_com_weiwentao996_media_factory_lib_voice.out" NAME="TestMergeMp3 in github.com/weiwentao996/media-factory/lib/voice Coverage Results" MODIFIED="1695436518613" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/media_factory$TestGenAdviceVideoWithSetting_in_github_com_weiwentao996_media_factory_cmd__1_.out" NAME="TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (1) Coverage Results" MODIFIED="1695711324959" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>

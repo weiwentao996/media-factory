@@ -83,33 +83,26 @@ func GenAdviceVideoWithSetting(advice []common.VttContent, voiceType, outPath st
 		panic(err)
 	}
 	bgmPath := fmt.Sprintf("%s/voice.wav", path)
-	var msg []string
 	var preTime float64
-	var vtt []common.VttContent
 	for i, content := range advice {
 		cllVttList := voice.GenEdgeVoiceOnline([]string{content.Content}, voiceType, fmt.Sprintf("%s/%05d.wav", path, i), &token)
-		for _, cllVtt := range cllVttList {
-			cllVtt.ContentImage = content.ContentImage
-			cllVtt.Time[0] += preTime
-			cllVtt.Time[1] += preTime
-			vtt = append(vtt, cllVtt)
-			preTime = cllVtt.Time[1]
-		}
+		advice[i].Time[0] = preTime
+		preTime += cllVttList[len(cllVttList)-1].Time[1] + setting.FpsFix
+		advice[i].Time[1] = preTime
 
-		msg = append(msg, content.Content)
 	}
 
 	voice.MergeWAV(fmt.Sprintf("%s/*.wav", path), bgmPath)
 	counter := 0
-	for i, content := range vtt {
+	for i, content := range advice {
 		fmt.Printf("\033[1;32;42m%s%d%s\n", "正在生成第 ", i+1, " 幕视频帧......")
 		content.Content = strings.Replace(content.Content, " ", "", -1)
-		counter = img.GenAdviceImage(path, &content, vtt[len(vtt)-1].Time[1]+1, counter, setting, style)
+		counter = img.GenAdviceImage(path, &content, advice[len(advice)-1].Time[1]+1, counter, setting, style)
 	}
 
 	fmt.Printf("\033[1;32;42m%s\n", "正在合成视频......")
 
-	if err := video.MultiImageToVideo(path+"/%05d.png", bgmPath, path, setting.FpsRate, (vtt[len(vtt)-1].Time[1]+1)*1000); err != nil {
+	if err := video.MultiImageToVideo(path+"/%05d.png", bgmPath, path, setting.FpsRate, (advice[len(advice)-1].Time[1]+1)*1000); err != nil {
 		panic(err)
 	}
 
