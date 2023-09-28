@@ -426,6 +426,136 @@ func GenAdviceImage(outPath string, data *common.VttContent, videoEndTime float6
 	return counter
 }
 
+func splitString(input string, segmentCount int) []string {
+	// 计算每个段的长度
+	strLen := []rune(input)
+	segmentSize := int(math.Ceil(float64(len(strLen)) / float64(segmentCount)))
+
+	var rs []string
+	current := 0
+	end := 0
+	for {
+		end += segmentSize
+		if end > len(strLen) {
+			rs = append(rs, string(strLen[current:]))
+			break
+		} else {
+			rs = append(rs, string(strLen[current:end]))
+			current = end
+		}
+
+	}
+
+	return rs
+}
+
+func GenMusicImage(outPath string, data *common.VttContent, videoEndTime float64, counter int, setting *common.AdviceFoSetting, style *common.AdviceFoStyle) int {
+	dc := gg.NewContext(Width, Height)
+
+	titleFrontBytes, err := sources.Sources.ReadFile("fronts/Aa厚底黑.ttf")
+	if err != nil {
+		panic(err)
+	}
+
+	face, err := LoadFontFace(titleFrontBytes, style.Size)
+	if err != nil {
+		panic(err)
+	}
+
+	dc.SetFontFace(face)
+
+	if style.Color != nil {
+		dc.SetRGB255(style.Color.R, style.Color.G, style.Color.B)
+	}
+	rectColor := color.RGBA{249, 205, 173, 100} // 背景色
+	offsetY := 100.0
+
+	sWidth, sHeight := dc.MeasureString(data.Content)
+	rowCount := sWidth / (Width - 100)
+
+	contentArr := splitString(data.Content, int(math.Ceil(rowCount)))
+
+	for _, s := range contentArr {
+		cWidth, cHeight := dc.MeasureString(s)
+		var x, y = (Width - cWidth) / 2, cHeight + offsetY
+		dc.SetColor(rectColor)
+		dc.DrawRectangle(x, y-0.9*sHeight, cWidth, sHeight*1.2)
+		dc.Fill()
+
+		if style.Color == nil {
+			dc.SetRGB255(0, 0, 0)
+		}
+
+		if style.Color != nil {
+			dc.SetRGB255(style.Color.R, style.Color.G, style.Color.B)
+		}
+
+		dc.DrawString(s, x, y)
+
+		offsetY += cHeight + 10
+	}
+
+	imageBytes, err := sources.Sources.ReadFile("img/BG.png")
+	if err != nil {
+		panic(err)
+	}
+	reader := bytes.NewReader(imageBytes)
+	bg, _, err := image.Decode(reader)
+	if err != nil {
+		panic(err)
+	}
+
+	var bgImg image.Image
+	if style.Background != "" {
+		bgImg, err = GetImage(style.Background)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	processList := NewCircularLinkedList()
+
+	for i := 0; i < 12; i++ {
+		imageBytes, err = sources.Sources.ReadFile(fmt.Sprintf("img/bugs/process%d.png", i))
+		if err != nil {
+			panic(err)
+		}
+		reader = bytes.NewReader(imageBytes)
+		p, _, err := image.Decode(reader)
+		if err != nil {
+			panic(err)
+		}
+
+		processList.Insert(p)
+	}
+
+	fpsCount := int(math.Round((data.Time[1] - data.Time[0] + setting.FpsFix) * setting.FpsRate))
+	// 多线程
+	wg := sync.WaitGroup{}
+	wg.Add(fpsCount)
+	for i := 0; i < fpsCount; i++ {
+		var proImage image.Image
+		proImage = processList.GetProcess()
+		allProcessPercentage := (data.Time[0] + (float64(i) / setting.FpsRate)) / videoEndTime
+		go func(pageIndex int, process float64) {
+			bgc := gg.NewContextForImage(bg)
+			if bgImg != nil {
+				putBackGroundImage(bgc, bgImg)
+			}
+			bgc.DrawImage(proImage, int(float64(Width)*process), Height-128)
+			bgc.DrawImage(dc.Image(), 0, int(sHeight))
+			fileName := fmt.Sprintf("%s/%05d.png", outPath, pageIndex)
+			if err := bgc.SavePNG(fileName); err != nil {
+				panic(err)
+			}
+			wg.Done()
+		}(counter, allProcessPercentage)
+		counter++
+	}
+	wg.Wait()
+	return counter
+}
+
 // GetImageFromNet 从远程读取图片
 func getImageFromNet(url string) (image.Image, error) {
 	res, err := http.Get(url)

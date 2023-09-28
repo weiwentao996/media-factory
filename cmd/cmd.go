@@ -97,7 +97,12 @@ func GenAdviceVideoWithSetting(advice []common.VttContent, voiceType, outPath st
 	for i, content := range advice {
 		fmt.Printf("\033[1;32;42m%s%d%s\n", "正在生成第 ", i+1, " 幕视频帧......")
 		content.Content = strings.Replace(content.Content, " ", "", -1)
-		counter = img.GenAdviceImage(path, &content, advice[len(advice)-1].Time[1]+1, counter, setting, style)
+		switch setting.Model {
+		case "music":
+			counter = img.GenMusicImage(path, &content, advice[len(advice)-1].Time[1]+1, counter, setting, style)
+		default:
+			counter = img.GenAdviceImage(path, &content, advice[len(advice)-1].Time[1]+1, counter, setting, style)
+		}
 	}
 
 	fmt.Printf("\033[1;32;42m%s\n", "正在合成视频......")

@@ -5,9 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5f696cbc-a360-476c-8cdb-c337bcbf2a1b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/cmd/music.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/cmd.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/cmd.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/cmd_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/cmd_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/common/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/lib/common/common.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/img/img.go" beforeDir="false" afterPath="$PROJECT_DIR$/lib/img/img.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,34 +36,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.format.on.save.advertiser.fired&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Work/media-factory/cmd&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.go.format.on.save.advertiser.fired": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "C:/work/test",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\work\media-factory\cmd" />
       <recent name="C:\Work\media-factory\cmd" />
       <recent name="C:\Work\media-factory\lib\video" />
       <recent name="C:\Work\media-factory\lib\voice" />
       <recent name="C:\work\media-factory\sources\img\tbgl" />
-      <recent name="C:\work\media-factory\sources\img\tbg" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Work\media-factory\cmd" />
@@ -69,8 +72,20 @@
       <recent name="C:\work\media-factory\sources\img\mla" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (3)">
+  <component name="RunManager" selected="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (2)">
     <configuration name="TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (1)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="media-factory" />
+      <working_directory value="$PROJECT_DIR$/cmd" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="github.com/weiwentao996/media-factory/cmd" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestGenAdviceVideoWithSetting\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (2)" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="media-factory" />
       <working_directory value="$PROJECT_DIR$/cmd" />
       <root_directory value="$PROJECT_DIR$" />
@@ -118,25 +133,13 @@
       <pattern value="^\QTestGenEdgeVoiceOnline\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestMergeWAV in github.com/weiwentao996/media-factory/lib/voice" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="media-factory" />
-      <working_directory value="$PROJECT_DIR$/lib/voice" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/weiwentao996/media-factory/lib/voice" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestMergeWAV\E$" />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (2)" />
         <item itemvalue="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (3)" />
         <item itemvalue="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (1)" />
         <item itemvalue="Go Test.TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd" />
         <item itemvalue="Go Test.TestGenEdgeVoiceOnline in github.com/weiwentao996/media-factory/lib/voice (1)" />
-        <item itemvalue="Go Test.TestMergeWAV in github.com/weiwentao996/media-factory/lib/voice" />
       </list>
     </recent_temporary>
   </component>
@@ -168,14 +171,14 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
           <url>file://$PROJECT_DIR$/lib/common/common.go</url>
-          <line>26</line>
+          <line>27</line>
           <option name="timeStamp" value="13" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/media_factory$TestMergeMp3_in_github_com_weiwentao996_media_factory_lib_voice.out" NAME="TestMergeMp3 in github.com/weiwentao996/media-factory/lib/voice Coverage Results" MODIFIED="1695436518613" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
     <SUITE FILE_PATH="coverage/media_factory$TestGenAdviceVideoWithSetting_in_github_com_weiwentao996_media_factory_cmd__1_.out" NAME="TestGenAdviceVideoWithSetting in github.com/weiwentao996/media-factory/cmd (1) Coverage Results" MODIFIED="1695711324959" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/media_factory$TestMergeMp3_in_github_com_weiwentao996_media_factory_lib_voice.out" NAME="TestMergeMp3 in github.com/weiwentao996/media-factory/lib/voice Coverage Results" MODIFIED="1695436518613" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="GoCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>

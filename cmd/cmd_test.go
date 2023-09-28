@@ -59,9 +59,9 @@ type Advice struct {
 func TestGenAdviceVideoWithSetting(t *testing.T) {
 	advice := Advice{}
 	content := viper.New()
-	content.AddConfigPath("./")     //设置读取的文件路径
-	content.SetConfigName("advice") //设置读取的文件名
-	content.SetConfigType("yaml")   //设置文件的类型
+	content.AddConfigPath("./")    //设置读取的文件路径
+	content.SetConfigName("music") //设置读取的文件名
+	content.SetConfigType("yaml")  //设置文件的类型
 	defer func() {
 		err := recover()
 		if err != nil {
@@ -82,19 +82,20 @@ func TestGenAdviceVideoWithSetting(t *testing.T) {
 
 	fmt.Printf("\033[1;32;42m%s\n", "读取文件成功!")
 	//cmd.GenVideo(essay.Page, "./sources/output")
-	GenAdviceVideoWithSetting(advice.Page, "zh-CN-YunyangNeural", "../output", &common.AdviceFoSetting{
+	GenAdviceVideoWithSetting(advice.Page, "zh-CN-YunxiNeural", "../output", &common.AdviceFoSetting{
 		FpsFix:  0.3,
 		FpsRate: 6,
+		Model:   "music",
 	}, &common.AdviceFoStyle{
 		Align:      "center",
-		Size:       80,
-		Background: "https://img.iuhub.cn/unsplash/nature/photo-1509316975850-ff9c5deb0cd9.jpg",
+		Size:       36,
+		Background: "https://img.iuhub.cn/unsplash/wallpapers/photo-1451224222030-cee2f5dbcd10.jpg",
 		Color: &common.Color{
-			R: 255,
-			G: 255,
-			B: 255,
+			R: 0,
+			G: 0,
+			B: 0,
 		},
-	}, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImF2YXRhciI6Imh0dHBzOi8vaW1nLml1aHViLmNuL3Vuc3BsYXNoL25hdHVyZS9waG90by0xNjkyMzAzNjEwMDc1LWJhZTU2MzI2MDMxMC5qcGciLCJwYXNzd29yZCI6IjEyMzQ1NiIsImV4cCI6MTY5NTc3MDgzNS4yNjAyNjQsImlzcyI6Ind3dCJ9.ugnDIHroCob7SxqeMpID52bmvAiVvTxCBjqpTIfEFwM")
+	}, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImF2YXRhciI6Imh0dHBzOi8vaW1nLml1aHViLmNuL3Vuc3BsYXNoL25hdHVyZS9waG90by0xNjkyMzAzNjEwMDc1LWJhZTU2MzI2MDMxMC5qcGciLCJwYXNzd29yZCI6IjEyMzQ1NiIsImV4cCI6MTY5NTkyMzA3My42MTkzNjEsImlzcyI6Ind3dCJ9.Xd0-KGAFGXklCgHypukFPeXLH5WEhRSPTW4bykS1t1o")
 	fmt.Printf("按任意键结束 ...")
 	endKey := make([]byte, 1)
 	os.Stdin.Read(endKey)

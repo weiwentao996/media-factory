@@ -22,8 +22,15 @@ type VttContent struct {
 }
 
 type AdviceFoSetting struct {
+	Model   string  `json:"model"`
 	FpsRate float64 `json:"fps_rate"`
 	FpsFix  float64 `json:"fps_fix"`
+}
+
+type CommentContent struct {
+	Content      []string   `json:"content" mapstructure:"content"`
+	ContentImage string     `json:"content_image" mapstructure:"content_image"`
+	Time         [2]float64 `json:"time" mapstructure:"time"`
 }
 
 type AdviceFoStyle struct {
