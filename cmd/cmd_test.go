@@ -88,14 +88,14 @@ func TestGenAdviceVideoWithSetting(t *testing.T) {
 		Model:   "music",
 	}, &common.AdviceFoStyle{
 		Align:      "center",
-		Size:       36,
+		Size:       48,
 		Background: "https://img.iuhub.cn/unsplash/wallpapers/photo-1451224222030-cee2f5dbcd10.jpg",
 		Color: &common.Color{
 			R: 0,
 			G: 0,
 			B: 0,
 		},
-	}, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImF2YXRhciI6Imh0dHBzOi8vaW1nLml1aHViLmNuL3Vuc3BsYXNoL25hdHVyZS9waG90by0xNjkyMzAzNjEwMDc1LWJhZTU2MzI2MDMxMC5qcGciLCJwYXNzd29yZCI6IjEyMzQ1NiIsImV4cCI6MTY5NTkyMzA3My42MTkzNjEsImlzcyI6Ind3dCJ9.Xd0-KGAFGXklCgHypukFPeXLH5WEhRSPTW4bykS1t1o")
+	}, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImF2YXRhciI6Imh0dHBzOi8vaW1nLml1aHViLmNuL3Vuc3BsYXNoL25hdHVyZS9waG90by0xNjkyMzAzNjEwMDc1LWJhZTU2MzI2MDMxMC5qcGciLCJwYXNzd29yZCI6IjEyMzQ1NiIsImV4cCI6MTY5Njc2NTI1Ny41Nzg2ODEsImlzcyI6Ind3dCJ9.GQXETPyDPTBnSjSLsR80LSVJueVhdp4QCBo__1PPgm4")
 	fmt.Printf("按任意键结束 ...")
 	endKey := make([]byte, 1)
 	os.Stdin.Read(endKey)

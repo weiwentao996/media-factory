@@ -17,6 +17,8 @@ type PageData struct {
 
 type VttContent struct {
 	Content      string     `json:"content" mapstructure:"content"`
+	Avatar       string     `json:"avatar" mapstructure:"avatar"`
+	Nickname     string     `json:"nickname" mapstructure:"nickname"`
 	ContentImage string     `json:"content_image" mapstructure:"content_image"`
 	Time         [2]float64 `json:"time" mapstructure:"time"`
 }

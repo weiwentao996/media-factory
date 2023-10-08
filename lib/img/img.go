@@ -449,6 +449,13 @@ func splitString(input string, segmentCount int) []string {
 	return rs
 }
 
+var (
+	dcOffsetY       = 200.0
+	dcPaddingX      = 400.0
+	dcPaddingBottom = 20.0
+	avatarSize      = 100.0
+)
+
 func GenMusicImage(outPath string, data *common.VttContent, videoEndTime float64, counter int, setting *common.AdviceFoSetting, style *common.AdviceFoStyle) int {
 	dc := gg.NewContext(Width, Height)
 
@@ -467,19 +474,39 @@ func GenMusicImage(outPath string, data *common.VttContent, videoEndTime float64
 	if style.Color != nil {
 		dc.SetRGB255(style.Color.R, style.Color.G, style.Color.B)
 	}
-	rectColor := color.RGBA{249, 205, 173, 100} // 背景色
-	offsetY := 100.0
+	rectColor := color.RGBA{255, 255, 255, 200} // 背景色
 
 	sWidth, sHeight := dc.MeasureString(data.Content)
-	rowCount := sWidth / (Width - 100)
+	rowCount := sWidth / (Width - dcPaddingX)
 
 	contentArr := splitString(data.Content, int(math.Ceil(rowCount)))
+
+	offsetY := dcOffsetY
+	// 昵称
+	_, cHeight := dc.MeasureString(data.Nickname)
+	var x, y = dcPaddingX / 2, cHeight + offsetY
+	dc.SetColor(rectColor)
+	//dc.DrawRectangle(x, y-0.9*sHeight, cWidth, sHeight*1.2)
+	dc.DrawRectangle(dcPaddingX/2, y-avatarSize, Width-dcPaddingX, dcPaddingBottom+avatarSize)
+	dc.Fill()
+
+	if style.Color == nil {
+		dc.SetRGB255(0, 0, 0)
+	}
+
+	if style.Color != nil {
+		dc.SetRGB255(style.Color.R, style.Color.G, style.Color.B)
+	}
+
+	dc.DrawString(data.Nickname+"：", x+avatarSize, y)
+	offsetY += cHeight + dcPaddingBottom
 
 	for _, s := range contentArr {
 		cWidth, cHeight := dc.MeasureString(s)
 		var x, y = (Width - cWidth) / 2, cHeight + offsetY
 		dc.SetColor(rectColor)
-		dc.DrawRectangle(x, y-0.9*sHeight, cWidth, sHeight*1.2)
+		//dc.DrawRectangle(x, y-0.9*sHeight, cWidth, sHeight*1.2)
+		dc.DrawRectangle(dcPaddingX/2, y-sHeight, Width-dcPaddingX, sHeight+dcPaddingBottom)
 		dc.Fill()
 
 		if style.Color == nil {
@@ -492,7 +519,7 @@ func GenMusicImage(outPath string, data *common.VttContent, videoEndTime float64
 
 		dc.DrawString(s, x, y)
 
-		offsetY += cHeight + 10
+		offsetY += cHeight + dcPaddingBottom
 	}
 
 	imageBytes, err := sources.Sources.ReadFile("img/BG.png")
@@ -508,6 +535,14 @@ func GenMusicImage(outPath string, data *common.VttContent, videoEndTime float64
 	var bgImg image.Image
 	if style.Background != "" {
 		bgImg, err = GetImage(style.Background)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	var avatar image.Image
+	if data.Avatar != "" {
+		avatar, err = GetImage(data.Avatar)
 		if err != nil {
 			panic(err)
 		}
@@ -542,6 +577,11 @@ func GenMusicImage(outPath string, data *common.VttContent, videoEndTime float64
 			if bgImg != nil {
 				putBackGroundImage(bgc, bgImg)
 			}
+
+			if avatar != nil {
+				putAvatarImage(dc, avatar)
+			}
+
 			bgc.DrawImage(proImage, int(float64(Width)*process), Height-128)
 			bgc.DrawImage(dc.Image(), 0, int(sHeight))
 			fileName := fmt.Sprintf("%s/%05d.png", outPath, pageIndex)
@@ -641,6 +681,28 @@ func putContentImage(dc *gg.Context, img image.Image) error {
 
 	// 将图片绘制到背景中央
 	dc.DrawImage(newBgC.Image(), int(xOffset), 0)
+
+	return nil
+}
+
+func putAvatarImage(dc *gg.Context, img image.Image) error {
+
+	// 计算图片缩放比例
+	scale := avatarSize / float64(img.Bounds().Dy())
+
+	// 计算缩放后图片的宽度和高度
+	scaledWidth := float64(img.Bounds().Dx()) * scale
+	scaledHeight := float64(img.Bounds().Dy()) * scale
+
+	// 创建一个新的绘图上下文
+	avatar := gg.NewContext(int(scaledWidth), int(scaledHeight))
+
+	// 缩放并绘制图像
+	avatar.Scale(scale, scale)
+	avatar.DrawImage(img, 0, 0)
+
+	// 将图片绘制到背景
+	dc.DrawImage(avatar.Image(), int(dcPaddingX/2)+4, int(dcOffsetY-avatarSize/2+2))
 
 	return nil
 }
