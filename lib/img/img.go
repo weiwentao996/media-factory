@@ -450,7 +450,7 @@ func splitString(input string, segmentCount int) []string {
 }
 
 var (
-	dcOffsetY       = 200.0
+	dcOffsetY       = 240.0
 	dcPaddingX      = 400.0
 	dcPaddingBottom = 20.0
 	avatarSize      = 100.0
@@ -474,7 +474,7 @@ func GenMusicImage(outPath string, data *common.VttContent, videoEndTime float64
 	if style.Color != nil {
 		dc.SetRGB255(style.Color.R, style.Color.G, style.Color.B)
 	}
-	rectColor := color.RGBA{255, 255, 255, 200} // 背景色
+	rectColor := color.RGBA{255, 255, 255, 100} // 背景色
 
 	sWidth, sHeight := dc.MeasureString(data.Content)
 	rowCount := sWidth / (Width - dcPaddingX)
