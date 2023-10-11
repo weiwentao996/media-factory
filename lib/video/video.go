@@ -56,7 +56,7 @@ func SingleImageToVideo(imgPath, outPath string) error {
 
 func MultiImageToVideo(imgPathRule, bgmPath, outPath string, fps float64, maxTime float64) error {
 	// video -r 0.1  -f image2 -i ./sources/img/%d.jpg  -s 640x480 ./sources/video/output.mp4
-	cmd := exec.Command("ffmpeg", "-r", fmt.Sprintf("%f", fps), "-f", "image2", "-i", imgPathRule, "-i", bgmPath, "-t", fmt.Sprintf("%f", maxTime), "-pix_fmt", "yuv420p", outPath+"/video.mp4", "-y")
+	cmd := exec.Command("ffmpeg", "-r", fmt.Sprintf("%f", fps), "-f", "image2", "-i", imgPathRule, "-i", bgmPath, "-t", fmt.Sprintf("%f", maxTime), "-pix_fmt", "yuv420p", outPath, "-y")
 	fmt.Println(cmd.String())
 	// 获取输出管道
 	stdout, err := cmd.StdoutPipe()
@@ -98,4 +98,45 @@ func copyOutput(r io.Reader) {
 		}
 		fmt.Print(string(buf[:n]))
 	}
+}
+
+func AddBgm(videoPath, audioPath, outputPath string) error {
+	// 获取视频时长
+	videoDurationCmd := exec.Command("ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", videoPath)
+	videoDuration, err := videoDurationCmd.Output()
+	if err != nil {
+		return err
+	}
+
+	// 获取音频时长
+	audioDurationCmd := exec.Command("ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", audioPath)
+	audioDuration, err := audioDurationCmd.Output()
+	if err != nil {
+		return err
+	}
+	// ffmpeg命令及参数
+	cmdArgs := []string{
+		"-i", videoPath,
+	}
+	if string(videoDuration) < string(audioDuration) {
+		cmdArgs = append(cmdArgs, "-i", audioPath, "-filter_complex", "[1:a]volume=0.1[a1];[0:a][a1]amix=inputs=2:duration=first[a]", "-strict", "experimental", "-shortest")
+	} else {
+		cmdArgs = append(cmdArgs, "-stream_loop", "-1", "-i", audioPath, "-filter_complex", "[1:a]volume=0.3[a1];[0:a][a1]amix=inputs=2:duration=first[a]", "-strict", "experimental")
+	}
+
+	cmdArgs = append(cmdArgs,
+		"-map", "0:v",
+		"-map", "[a]",
+		"-c:v", "copy",
+		"-c:a", "aac", "-y", outputPath)
+
+	// 执行ffmpeg命令
+	cmd := exec.Command("ffmpeg", cmdArgs...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err = cmd.Run(); err != nil {
+		return err
+	}
+	return nil
 }

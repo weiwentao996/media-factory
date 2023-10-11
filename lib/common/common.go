@@ -28,6 +28,7 @@ type VttContent struct {
 }
 
 type AdviceFoSetting struct {
+	BgmUrl  string  `json:"bgm_url"`
 	Model   string  `json:"model"`
 	FpsRate float64 `json:"fps_rate"`
 	FpsFix  float64 `json:"fps_fix"`

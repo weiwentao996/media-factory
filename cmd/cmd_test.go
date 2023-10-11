@@ -86,6 +86,7 @@ func TestGenAdviceVideoWithSetting(t *testing.T) {
 		FpsFix:  0.3,
 		FpsRate: 6,
 		Model:   "music",
+		BgmUrl:  "http://m7.music.126.net/20231011100310/190ccb3526417d0a8097b33427fe87de/ymusic/030b/545b/5308/4a2c7e7115c11526e4c4db18c347c03c.mp3",
 	}, &common.AdviceFoStyle{
 		Align:      "center",
 		Size:       48,

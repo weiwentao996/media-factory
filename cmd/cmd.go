@@ -106,9 +106,15 @@ func GenAdviceVideoWithSetting(advice []common.VttContent, voiceType, outPath st
 	}
 
 	fmt.Printf("\033[1;32;42m%s\n", "正在合成视频......")
-
-	if err := video.MultiImageToVideo(path+"/%05d.png", bgmPath, path, setting.FpsRate, (advice[len(advice)-1].Time[1]+1)*1000); err != nil {
+	videoFilePath := path + "/video.mp4"
+	if err := video.MultiImageToVideo(path+"/%05d.png", bgmPath, videoFilePath, setting.FpsRate, (advice[len(advice)-1].Time[1]+1)*1000); err != nil {
 		panic(err)
+	}
+
+	if setting.BgmUrl != "" {
+		finishFilePath := path + "/finish.mp4"
+		fmt.Printf("\033[1;32;42m%s\n", "正在添加bgm......")
+		video.AddBgm(videoFilePath, setting.BgmUrl, finishFilePath)
 	}
 
 	fmt.Printf("\033[1;32;42m%s\n", "已生成视频!")
