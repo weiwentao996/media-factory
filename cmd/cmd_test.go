@@ -95,7 +95,7 @@ func TestGenAdviceVideoWithSetting(t *testing.T) {
 			G: 0,
 			B: 0,
 		},
-	}, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImF2YXRhciI6Imh0dHBzOi8vaW1nLml1aHViLmNuL3Vuc3BsYXNoL25hdHVyZS9waG90by0xNjkyMzAzNjEwMDc1LWJhZTU2MzI2MDMxMC5qcGciLCJwYXNzd29yZCI6IjEyMzQ1NiIsImV4cCI6MTY5Njc2NTI1Ny41Nzg2ODEsImlzcyI6Ind3dCJ9.GQXETPyDPTBnSjSLsR80LSVJueVhdp4QCBo__1PPgm4")
+	}, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImF2YXRhciI6Imh0dHBzOi8vaW1nLml1aHViLmNuL3Vuc3BsYXNoL25hdHVyZS9waG90by0xNjkyMzAzNjEwMDc1LWJhZTU2MzI2MDMxMC5qcGciLCJwYXNzd29yZCI6IjEyMzQ1NiIsImV4cCI6MTY5NzAyMjMyOS43NDg5NTQsImlzcyI6Ind3dCJ9.llbAofN4i5IP_JiZEuxhx-pzXcaI5YAOttw3cApLlSw")
 	fmt.Printf("按任意键结束 ...")
 	endKey := make([]byte, 1)
 	os.Stdin.Read(endKey)

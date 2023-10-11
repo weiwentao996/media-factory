@@ -1,6 +1,9 @@
 package common
 
-import "math"
+import (
+	"math"
+	"time"
+)
 
 type PPTSetting struct {
 	FpsRate         float64 `json:"fps_rate"`
@@ -21,6 +24,7 @@ type VttContent struct {
 	Nickname     string     `json:"nickname" mapstructure:"nickname"`
 	ContentImage string     `json:"content_image" mapstructure:"content_image"`
 	Time         [2]float64 `json:"time" mapstructure:"time"`
+	CommentTime  time.Time  `json:"comment_time" mapstructure:"comment_time"`
 }
 
 type AdviceFoSetting struct {

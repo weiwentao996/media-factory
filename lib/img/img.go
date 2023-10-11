@@ -498,7 +498,7 @@ func GenMusicImage(outPath string, data *common.VttContent, videoEndTime float64
 		dc.SetRGB255(style.Color.R, style.Color.G, style.Color.B)
 	}
 
-	dc.DrawString(" "+data.Nickname+"：", x+avatarSize, y)
+	dc.DrawString(fmt.Sprintf("%s  [%s]: ", data.Nickname, data.CommentTime.Format("2006-01-02 15:04:05")), x+avatarSize, y)
 	offsetY += cHeight + dcPaddingBottom
 
 	for _, s := range contentArr {
