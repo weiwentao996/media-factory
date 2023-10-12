@@ -94,6 +94,15 @@ func GenAdviceVideoWithSetting(advice []common.VttContent, voiceType, outPath st
 
 	voice.MergeWAV(fmt.Sprintf("%s/*.wav", path), bgmPath)
 	counter := 0
+
+	advice = append(advice, common.VttContent{
+		Content:      "Ending...",
+		Avatar:       "",
+		Nickname:     "",
+		ContentImage: "",
+		Time:         [2]float64{advice[len(advice)-1].Time[1], advice[len(advice)-1].Time[1] + 3},
+		CommentTime:  time.Time{},
+	})
 	for i, content := range advice {
 		fmt.Printf("\033[1;32;42m%s%d%s\n", "正在生成第 ", i+1, " 幕视频帧......")
 		content.Content = strings.Replace(content.Content, " ", "", -1)
