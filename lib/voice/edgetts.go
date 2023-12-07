@@ -241,7 +241,7 @@ func GenEdgeVoiceOnline(content []string, voiceType, outPath string, token *stri
 	}
 
 	// 目标 URL
-	url := "http://1.15.92.254:8899/edge"
+	url := "https://tbg.iuhub.cn/voice/edge"
 
 	ms, err := json.Marshal(requestData)
 	if err != nil {
