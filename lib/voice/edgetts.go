@@ -267,3 +267,35 @@ func GenEdgeVoiceOnline(content []string, voiceType, outPath string, token *stri
 	base64ToWAV(rsp.Voice, outPath)
 	return rsp.Vtt
 }
+
+func GenAzureVoiceOnline(content string, voiceType, audioPath string, token string) {
+	// 要发送的数据
+	requestData := map[string]interface{}{
+		"voice":   voiceType,
+		"content": content,
+	}
+
+	// 目标 URL
+	url := "https://tbg.iuhub.cn/voice/azure"
+
+	ms, err := json.Marshal(requestData)
+	if err != nil {
+		panic(err)
+	}
+	// 执行 POST 请求
+	response, err := httpPost(url, ms, &token)
+	if err != nil {
+		panic(err)
+	}
+	defer response.Body.Close()
+
+	// 处理响应
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("HTTP 响应状态码:", response.Status)
+
+	base64ToWAV(string(responseBody), audioPath)
+}

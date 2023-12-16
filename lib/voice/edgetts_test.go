@@ -2,6 +2,7 @@ package voice
 
 import (
 	"fmt"
+	"github.com/weiwentao996/media-factory/lib/video"
 	"testing"
 )
 
@@ -94,4 +95,23 @@ func TestGenEdgeVoiceOnline(t *testing.T) {
 func TestMergeWAV(t *testing.T) {
 	err := MergeWAV("C:\\Users\\weiwentao\\Desktop\\output\\1695623347\\*.wav", "C:\\Users\\weiwentao\\Desktop\\output\\1695623347")
 	fmt.Println(err)
+}
+
+func TestGenAzureVoiceOnline(t *testing.T) {
+	//voiceList := []string{
+	//	"zh-CN-XiaoxiaoNeural",
+	//	"zh-CN-XiaoyiNeural",
+	//	"zh-CN-YunjianNeural",
+	//	"zh-CN-YunxiNeural",
+	//	"zh-CN-YunxiaNeural",
+	//	"zh-CN-YunyangNeural",
+	//	"zh-CN-liaoning-XiaobeiNeural",
+	//	"zh-CN-shaanxi-XiaoniNeural",
+	//}
+	//token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImF2YXRhciI6Imh0dHBzOi8vaW1nLml1aHViLmNuL3Vuc3BsYXNoL25hdHVyZS9waG90by0xNjkyMzAzNjEwMDc1LWJhZTU2MzI2MDMxMC5qcGciLCJwYXNzd29yZCI6IjEyMzQ1NiIsImV4cCI6MTcwMjY1ODU4Ni44Nzk4NSwiaXNzIjoid3d0In0.07VygFWqmzXWrJayDYrqFdP6fNTCe51XOQud6P0p26I"
+	//for _, s := range voiceList {
+	//	GenAzureVoiceOnline(text, s, fmt.Sprintf("./%s.wav", s), &token)
+	//}
+	video.ImageAndVoice2Video("C:\\Users\\weiwentao\\Desktop\\Speech\\北京拓扑图.png", "C:\\Users\\weiwentao\\Desktop\\Speech\\zh-CN-liaoning-XiaobeiNeural.wav", "C:\\Users\\weiwentao\\Desktop\\Speech\\a.mp4")
+
 }

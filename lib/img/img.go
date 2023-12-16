@@ -456,6 +456,118 @@ var (
 	avatarSize      = 100.0
 )
 
+func GenMusicImageFast(imgPath string, data *common.VttContent, style *common.AdviceFoStyle) {
+	dc := gg.NewContext(Width, Height)
+	titleFrontBytes, err := sources.Sources.ReadFile("fronts/Aa厚底黑.ttf")
+	if err != nil {
+		panic(err)
+	}
+
+	face, err := LoadFontFace(titleFrontBytes, style.Size)
+	if err != nil {
+		panic(err)
+	}
+
+	dc.SetFontFace(face)
+
+	if style.Color != nil {
+		dc.SetRGB255(style.Color.R, style.Color.G, style.Color.B)
+	}
+	rectColor := color.RGBA{255, 255, 255, 100} // 背景色
+
+	data.Content = strings.TrimSpace(data.Content)
+
+	sWidth, sHeight := dc.MeasureString(data.Content)
+	rowCount := sWidth / (Width - dcPaddingX)
+
+	contentArr := splitString(data.Content, int(math.Ceil(rowCount)))
+
+	offsetY := dcOffsetY
+	// 昵称
+	_, cHeight := dc.MeasureString(data.Nickname)
+	var x, y = dcPaddingX / 2, cHeight + offsetY
+	dc.SetColor(rectColor)
+	//dc.DrawRectangle(x, y-0.9*sHeight, cWidth, sHeight*1.2)
+	dc.DrawRectangle(dcPaddingX/2, y-avatarSize, Width-dcPaddingX, dcPaddingBottom+avatarSize)
+	dc.Fill()
+
+	if style.Color == nil {
+		dc.SetRGB255(0, 0, 0)
+	}
+
+	if style.Color != nil {
+		dc.SetRGB255(style.Color.R, style.Color.G, style.Color.B)
+	}
+
+	if data.Nickname != "" {
+		dc.DrawString(fmt.Sprintf("%s  [%s]: ", data.Nickname, data.CommentTime.Format("2006-01-02 15:04:05")), x+avatarSize, y)
+	}
+
+	offsetY += cHeight + dcPaddingBottom
+	for _, s := range contentArr {
+		cWidth, cHeight := dc.MeasureString(s)
+		var x, y = (Width - cWidth) / 2, cHeight + offsetY
+		dc.SetColor(rectColor)
+		//dc.DrawRectangle(x, y-0.9*sHeight, cWidth, sHeight*1.2)
+		dc.DrawRectangle(dcPaddingX/2, y-sHeight, Width-dcPaddingX, sHeight+dcPaddingBottom)
+		dc.Fill()
+
+		if style.Color == nil {
+			dc.SetRGB255(0, 0, 0)
+		}
+
+		if style.Color != nil {
+			dc.SetRGB255(style.Color.R, style.Color.G, style.Color.B)
+		}
+
+		dc.DrawString(s, x, y)
+
+		offsetY += cHeight + dcPaddingBottom
+	}
+
+	imageBytes, err := sources.Sources.ReadFile("img/BG.png")
+	if err != nil {
+		panic(err)
+	}
+	reader := bytes.NewReader(imageBytes)
+	bg, _, err := image.Decode(reader)
+	if err != nil {
+		panic(err)
+	}
+
+	var bgImg image.Image
+	if style.Background != "" {
+		bgImg, err = GetImage(style.Background)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	var avatar image.Image
+	if data.Avatar != "" {
+		avatar, err = GetImage(data.Avatar)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	bgc := gg.NewContextForImage(bg)
+
+	if bgImg != nil {
+		putBackGroundImage(bgc, bgImg)
+	}
+
+	if avatar != nil {
+		putAvatarImage(dc, avatar)
+	}
+
+	bgc.DrawImage(dc.Image(), 0, int(sHeight))
+
+	if err := bgc.SavePNG(imgPath); err != nil {
+		panic(err)
+	}
+}
+
 func GenMusicImage(outPath string, data *common.VttContent, videoEndTime float64, counter int, setting *common.AdviceFoSetting, style *common.AdviceFoStyle) int {
 	dc := gg.NewContext(Width, Height)
 

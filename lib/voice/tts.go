@@ -124,7 +124,7 @@ func httpPost(url string, data []byte, token *string) (*http.Response, error) {
 
 func base64ToWAV(base64Data string, output string) {
 	// 解码Base64数据
-	audioData, err := base64.StdEncoding.DecodeString(base64Data)
+	audioData, err := base64.StdEncoding.DecodeString(strings.Replace(base64Data, `"`, "", -1))
 	if err != nil {
 		panic(err)
 	}

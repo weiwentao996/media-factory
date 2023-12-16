@@ -101,3 +101,42 @@ func TestGenAdviceVideoWithSetting(t *testing.T) {
 	endKey := make([]byte, 1)
 	os.Stdin.Read(endKey)
 }
+
+func TestGenVideoFast(t *testing.T) {
+	advice := Advice{}
+	content := viper.New()
+	content.AddConfigPath("./")    //设置读取的文件路径
+	content.SetConfigName("music") //设置读取的文件名
+	content.SetConfigType("yaml")  //设置文件的类型
+	defer func() {
+		err := recover()
+		if err != nil {
+			fmt.Printf("\033[1;31;42m%v\n", err)
+			fmt.Printf("\033[1;31;42m%s\n", "生成视频失败！")
+			fmt.Printf("按任意键结束 ...")
+			endKey := make([]byte, 1)
+			os.Stdin.Read(endKey)
+		}
+
+	}()
+	if err := content.ReadInConfig(); err != nil {
+		panic(err)
+	}
+	if err := content.Unmarshal(&advice); err != nil {
+		panic(err)
+	}
+	//zh-CN-YunhaoNeural男
+	//zh-CN-XiaoyiNeural女
+
+	fmt.Printf("\033[1;32;42m%s\n", "读取文件成功!")
+	GenVideoFast(advice.Page, "zh-CN-YunhaoNeural", "../output", "http://m701.music.126.net/20231216171930/94aa5efe2d07562816fc0c0d5e25674c/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/28481783741/1069/31c7/0ad6/74ecb0f8f7021f937f1aa633714a0c32.flac", &common.AdviceFoStyle{
+		Align:      "center",
+		Size:       48,
+		Background: "https://img.iuhub.cn/unsplash/wallpapers/photo-1451224222030-cee2f5dbcd10.jpg",
+		Color: &common.Color{
+			R: 0,
+			G: 0,
+			B: 0,
+		},
+	}, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImF2YXRhciI6Imh0dHBzOi8vaW1nLml1aHViLmNuL3Vuc3BsYXNoL25hdHVyZS9waG90by0xNjkyMzAzNjEwMDc1LWJhZTU2MzI2MDMxMC5qcGciLCJwYXNzd29yZCI6IjEyMzQ1NiIsImV4cCI6MTcwMjcyODQyOC42OTUzOTQsImlzcyI6Ind3dCJ9.AT7ftmnkax5Zev7BNnNezRXpFsSd5SwmKe4JicA-5gc")
+}

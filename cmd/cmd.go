@@ -128,3 +128,37 @@ func GenAdviceVideoWithSetting(advice []common.VttContent, voiceType, outPath st
 
 	fmt.Printf("\033[1;32;42m%s\n", "已生成视频!")
 }
+
+func GenVideoFast(advice []common.VttContent, voiceType, output, bmg string, style *common.AdviceFoStyle, token string) {
+	var audioPath, imgPath, videoPath string
+	output = fmt.Sprintf("%s/%d", output, time.Now().Unix())
+	for i, content := range advice {
+		fmt.Printf("\033[1;32;42m正在生成第%d页......\n", i+1)
+		if err := os.MkdirAll(output, 0444); err != nil {
+			panic(err)
+		}
+
+		audioPath = fmt.Sprintf("%s/%d.wav", output, i)
+		imgPath = fmt.Sprintf("%s/%d.png", output, i)
+		videoPath = fmt.Sprintf("%s/%d.mp4", output, i)
+
+		// 生成音频
+		voice.GenAzureVoiceOnline(content.Content, voiceType, audioPath, token)
+
+		// 生成图片
+		img.GenMusicImageFast(imgPath, &content, style)
+
+		// 合成视频
+		video.ImageAndVoice2Video(imgPath, audioPath, videoPath)
+	}
+
+	// 融合视频
+	fmt.Printf("\033[1;32;42m%s\n", "融合视频......")
+	mergeVideoPath, _ := video.Merge(fmt.Sprintf("%s/*.mp4", output), output)
+
+	// 添加BGM
+	finishFilePath := output + "/finish.mp4"
+	fmt.Printf("\033[1;32;42m%s\n", "正在添加bgm......")
+	video.AddBgm(mergeVideoPath, bmg, finishFilePath)
+	os.RemoveAll(mergeVideoPath)
+}

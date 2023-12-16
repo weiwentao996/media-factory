@@ -1,10 +1,18 @@
 package video
 
 import (
+	"bytes"
 	"fmt"
+	"github.com/weiwentao996/media-factory/lib/img"
+	"github.com/weiwentao996/media-factory/sources"
 	"io"
+	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"unicode"
 )
 
 //多张图片组转视频 video -f image2 -i ~/Desktop/images/image%d.jpg  -vcodec libx264  ~/Desktop/test.mp4 -y
@@ -139,4 +147,145 @@ func AddBgm(videoPath, audioPath, outputPath string) error {
 		return err
 	}
 	return nil
+}
+
+// ImageAndVoice2Video 图片声音生成视频
+func ImageAndVoice2Video(imgPath, voicePath, outPath string) {
+	imagePath := imgPath
+	audioPath := voicePath
+	outputPath := outPath
+
+	cmd := exec.Command("ffmpeg", "-loop", "1", "-i", imagePath, "-i", audioPath, "-c:v", "libx264", "-c:a", "aac", "-strict", "experimental", "-b:a", "192k", "-shortest", outputPath)
+
+	if err := cmd.Run(); err != nil {
+		log.Fatalf("Error executing FFmpeg command: %s", err)
+	}
+
+	os.RemoveAll(imgPath)
+	os.RemoveAll(voicePath)
+}
+
+func Merge(inputPattern string, output string) (string, error) {
+	tmpVideoPath := fmt.Sprintf("%s/tmp.mp4", output)
+	// 列出文件列表
+	// 获取匹配通配符的文件列表
+	files, err := filepath.Glob(inputPattern)
+	if err != nil {
+		return "", err
+	}
+
+	if len(files) == 0 {
+		return "", err
+	}
+
+	// 创建文件列表文本文件
+	filelist, err := os.Create("filelist")
+	if err != nil {
+		return "", err
+	}
+
+	defer filelist.Close()
+
+	// 写入文件列表
+	for _, file := range files {
+		filelist.WriteString(fmt.Sprintf("file '%s'\n", file))
+	}
+
+	// 使用 FFmpeg 合并文件
+	cmd := exec.Command("ffmpeg", "-f", "concat", "-safe", "0", "-i", "filelist", "-c", "copy", tmpVideoPath, "-y")
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+
+	err = cmd.Run()
+	if err != nil {
+		return "", err
+	}
+
+	filelist.Close()
+	os.RemoveAll("filelist")
+
+	// 写入文件列表
+	for _, file := range files {
+		os.RemoveAll(file)
+	}
+
+	AddProcess(tmpVideoPath, fmt.Sprintf("%s/output.mp4", output))
+
+	os.RemoveAll(tmpVideoPath)
+
+	return fmt.Sprintf("%s/output.mp4", output), nil
+}
+
+func AddProcess(videoInput, outputFile string) {
+	//以下是一个示例命令，假设进度条 GIF 的宽度是 200 像素，高度是 50 像素，视频的宽度是 1280 像素，高度是 720 像素，持续时间为 10 秒：
+	// 这个命令中的 overlay 过滤器包含了 x 和 y 参数。其中 x 参数控制 GIF 的水平位置，使用了一个表达式来实现从左向右移动的效果。y 参数保持在视频底部。
+	// lt(-w+(t)*200,0) 将在视频底部左侧将 GIF 从左到右移动，t 代表时间。
+	// H-h 用于将 GIF 放置在视频底部。
+	file, _ := sources.Sources.ReadFile("img/bugs/index.gif")
+
+	create, _ := os.Create(outputFile + ".gif")
+	defer func() {
+		create.Close()
+		os.RemoveAll(outputFile + ".gif")
+	}()
+
+	io.Copy(create, bytes.NewBuffer(file))
+
+	totalTIme := int(GetVideoTime(videoInput) + 3)
+	cellWidth := img.Width / totalTIme
+	cmd := exec.Command("ffmpeg",
+		"-i", videoInput,
+		"-ignore_loop", "0", // 循环播放
+		"-i", outputFile+".gif",
+		"-filter_complex", fmt.Sprintf("[0:v][1:v] overlay=x='if(lt(-w+(t)*%d,0),0,-w+(t)*%d)':y=H-h", cellWidth, cellWidth),
+		"-t", fmt.Sprintf("%d", int(totalTIme)),
+		"-y",
+		outputFile,
+	)
+
+	if err := cmd.Run(); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func GetVideoTime(videoInput string) float64 {
+	videoDurationCmd := exec.Command("ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", videoInput)
+	audioDuration, _ := videoDurationCmd.Output()
+
+	// 使用 strings.Map 函数去除不可见字符
+	result := strings.Map(func(r rune) rune {
+		if unicode.IsPrint(r) {
+			return r
+		}
+		return -1 // 删除不可见字符
+	}, string(audioDuration))
+
+	videoTimes, _ := strconv.ParseFloat(strings.TrimSpace(result), 10)
+	return videoTimes
+}
+
+func timeToSeconds(timeStr string) (int, error) {
+	parts := strings.Split(timeStr, ":")
+	if len(parts) != 3 {
+		return 0, fmt.Errorf("时间格式无效")
+	}
+
+	hours, err := strconv.Atoi(parts[0])
+	if err != nil {
+		return 0, fmt.Errorf("小时格式错误")
+	}
+
+	minutes, err := strconv.Atoi(parts[1])
+	if err != nil {
+		return 0, fmt.Errorf("分钟格式错误")
+	}
+
+	secWithMs := strings.Split(parts[2], ".")
+	seconds, err := strconv.Atoi(secWithMs[0])
+	if err != nil {
+		return 0, fmt.Errorf("秒格式错误")
+	}
+
+	totalSeconds := hours*3600 + minutes*60 + seconds
+	return totalSeconds, nil
 }
