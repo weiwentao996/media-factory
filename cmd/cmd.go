@@ -86,7 +86,11 @@ func GenAdviceVideoWithSetting(advice []common.VttContent, voiceType, outPath st
 	bgmPath := fmt.Sprintf("%s/voice.wav", path)
 	var preTime float64
 	for i, content := range advice {
-		cllVttList := voice.GenEdgeVoiceOnline([]string{content.Content}, voiceType, fmt.Sprintf("%s/%05d.wav", path, i), &token)
+		cllVttList, err := voice.GenEdgeVoiceOnline([]string{content.Content}, voiceType, fmt.Sprintf("%s/%05d.wav", path, i), &token)
+		if err != nil {
+			return err
+		}
+
 		advice[i].Time[0] = preTime
 		preTime += cllVttList[len(cllVttList)-1].Time[1] + setting.FpsFix
 		advice[i].Time[1] = preTime
@@ -113,9 +117,15 @@ func GenAdviceVideoWithSetting(advice []common.VttContent, voiceType, outPath st
 		content.Content = strings.Replace(content.Content, " ", "", -1)
 		switch setting.Model {
 		case "music":
-			counter = img.GenMusicImage(path, &content, advice[len(advice)-1].Time[1]+1, counter, setting, style)
+			counter, err = img.GenMusicImage(path, &content, advice[len(advice)-1].Time[1]+1, counter, setting, style)
+			if err != nil {
+				return err
+			}
 		default:
-			counter = img.GenAdviceImage(path, &content, advice[len(advice)-1].Time[1]+1, counter, setting, style)
+			counter, err = img.GenAdviceImage(path, &content, advice[len(advice)-1].Time[1]+1, counter, setting, style)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
