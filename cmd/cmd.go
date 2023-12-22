@@ -123,13 +123,13 @@ func GenAdviceVideoWithSetting(advice []common.VttContent, voiceType, outPath st
 	if setting.BgmUrl != "" {
 		finishFilePath := path + "/finish.mp4"
 		fmt.Printf("\033[1;32;42m%s\n", "正在添加bgm......")
-		video.AddBgm(videoFilePath, setting.BgmUrl, finishFilePath)
+		video.AddBgm(videoFilePath, setting.BgmUrl, finishFilePath, 0.1)
 	}
 
 	fmt.Printf("\033[1;32;42m%s\n", "已生成视频!")
 }
 
-func GenVideoFast(advice []common.VttContent, voiceType, output, bmg string, style *common.AdviceFoStyle, token string) {
+func GenVideoFast(advice []common.VttContent, voiceType, output, bmg string, style *common.AdviceFoStyle, bgmVolume float32, token string) {
 	var audioPath, imgPath, videoPath string
 	output = fmt.Sprintf("%s/%d", output, time.Now().Unix())
 	for i, content := range advice {
@@ -159,6 +159,6 @@ func GenVideoFast(advice []common.VttContent, voiceType, output, bmg string, sty
 	// 添加BGM
 	finishFilePath := output + "/finish.mp4"
 	fmt.Printf("\033[1;32;42m%s\n", "正在添加bgm......")
-	video.AddBgm(mergeVideoPath, bmg, finishFilePath)
+	video.AddBgm(mergeVideoPath, bmg, finishFilePath, bgmVolume)
 	os.RemoveAll(mergeVideoPath)
 }

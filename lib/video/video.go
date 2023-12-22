@@ -108,7 +108,7 @@ func copyOutput(r io.Reader) {
 	}
 }
 
-func AddBgm(videoPath, audioPath, outputPath string) error {
+func AddBgm(videoPath, audioPath, outputPath string, volume float32) error {
 	// 获取视频时长
 	videoDurationCmd := exec.Command("ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", videoPath)
 	videoDuration, err := videoDurationCmd.Output()
@@ -129,7 +129,7 @@ func AddBgm(videoPath, audioPath, outputPath string) error {
 	if string(videoDuration) < string(audioDuration) {
 		cmdArgs = append(cmdArgs, "-i", audioPath, "-filter_complex", "[1:a]volume=0.1[a1];[0:a][a1]amix=inputs=2:duration=first[a]", "-strict", "experimental", "-shortest")
 	} else {
-		cmdArgs = append(cmdArgs, "-stream_loop", "-1", "-i", audioPath, "-filter_complex", "[1:a]volume=0.3[a1];[0:a][a1]amix=inputs=2:duration=first[a]", "-strict", "experimental")
+		cmdArgs = append(cmdArgs, "-stream_loop", "-1", "-i", audioPath, "-filter_complex", "[1:a]volume="+fmt.Sprintf("%f", volume)+"[a1];[0:a][a1]amix=inputs=2:duration=first[a]", "-strict", "experimental")
 	}
 
 	cmdArgs = append(cmdArgs,
