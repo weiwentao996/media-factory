@@ -87,7 +87,7 @@ func LoadFontFace(fontBytes []byte, points float64) (font.Face, error) {
 	return face, nil
 }
 
-func GenPPTImage(outPath string, data common.PageData, counter, allFpsCount int, setting *common.PPTSetting) {
+func GenPPTImage(outPath string, data common.PageData, counter, allFpsCount int, setting *common.PPTSetting) error {
 	conf := common.GetConfig(setting, data)
 	dc := gg.NewContext(Width, Height)
 	offsetY := 10.0
@@ -98,12 +98,12 @@ func GenPPTImage(outPath string, data common.PageData, counter, allFpsCount int,
 
 	titleFrontBytes, err := sources.Sources.ReadFile("fronts/Aa厚底黑.ttf")
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	face, err := LoadFontFace(titleFrontBytes, data.Style.Title.Size)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	dc.SetFontFace(face)
@@ -147,12 +147,12 @@ func GenPPTImage(outPath string, data common.PageData, counter, allFpsCount int,
 
 		contentFrontBytes, err := sources.Sources.ReadFile("fronts/Leefont蒙黑体.ttf")
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		contentFace, err := LoadFontFace(contentFrontBytes, data.Style.Content.Size)
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		dc.SetFontFace(contentFace)
@@ -187,25 +187,25 @@ func GenPPTImage(outPath string, data common.PageData, counter, allFpsCount int,
 
 	imageBytes, err := sources.Sources.ReadFile("img/BG.png")
 	if err != nil {
-		panic(err)
+		return err
 	}
 	reader := bytes.NewReader(imageBytes)
 	bg, _, err := image.Decode(reader)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	var bgImg image.Image
 	if data.Style.Background != "" {
 		bgImg, err = GetImage(data.Style.Background)
 		if err != nil {
-			panic(err)
+			return err
 		}
 		//bgImg = adjustOpacity(bgImg, 0.3)
 	}
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	processList := NewCircularLinkedList()
@@ -213,12 +213,12 @@ func GenPPTImage(outPath string, data common.PageData, counter, allFpsCount int,
 	for i := 0; i < 12; i++ {
 		imageBytes, err = sources.Sources.ReadFile(fmt.Sprintf("img/bugs/process%d.png", i))
 		if err != nil {
-			panic(err)
+			return err
 		}
 		reader = bytes.NewReader(imageBytes)
 		p, _, err := image.Decode(reader)
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		processList.Insert(p)
@@ -279,11 +279,12 @@ func GenPPTImage(outPath string, data common.PageData, counter, allFpsCount int,
 			}
 			fileName := fmt.Sprintf("%s/%05d.png", outPath, counter)
 			if err := bgc.SavePNG(fileName); err != nil {
-				panic(err)
+				return err
 			}
 			counter++
 		}
 	}
+	return nil
 }
 
 func GetImage(path string) (image.Image, error) {
@@ -293,27 +294,27 @@ func GetImage(path string) (image.Image, error) {
 	}
 	imageBytes, err := sources.Sources.ReadFile("img/BG.png")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	reader := bytes.NewReader(imageBytes)
 	bg, _, err := image.Decode(reader)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	return bg, nil
 }
 
-func GenAdviceImage(outPath string, data *common.VttContent, videoEndTime float64, counter int, setting *common.AdviceFoSetting, style *common.AdviceFoStyle) int {
+func GenAdviceImage(outPath string, data *common.VttContent, videoEndTime float64, counter int, setting *common.AdviceFoSetting, style *common.AdviceFoStyle) (int, error) {
 	dc := gg.NewContext(Width, Height)
 
 	titleFrontBytes, err := sources.Sources.ReadFile("fronts/Aa厚底黑.ttf")
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 
 	face, err := LoadFontFace(titleFrontBytes, style.Size)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 
 	dc.SetFontFace(face)
@@ -354,19 +355,19 @@ func GenAdviceImage(outPath string, data *common.VttContent, videoEndTime float6
 
 	imageBytes, err := sources.Sources.ReadFile("img/BG.png")
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 	reader := bytes.NewReader(imageBytes)
 	bg, _, err := image.Decode(reader)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 
 	var bgImg image.Image
 	if style.Background != "" {
 		bgImg, err = GetImage(style.Background)
 		if err != nil {
-			panic(err)
+			return 0, err
 		}
 		//bgImg = adjustOpacity(bgImg, 0.3)
 	}
@@ -375,7 +376,7 @@ func GenAdviceImage(outPath string, data *common.VttContent, videoEndTime float6
 	if style.Background != "" {
 		conetentImage, err = GetImage(data.ContentImage)
 		if err != nil {
-			panic(err)
+			return 0, err
 		}
 		//bgImg = adjustOpacity(bgImg, 0.3)
 	}
@@ -385,12 +386,12 @@ func GenAdviceImage(outPath string, data *common.VttContent, videoEndTime float6
 	for i := 0; i < 12; i++ {
 		imageBytes, err = sources.Sources.ReadFile(fmt.Sprintf("img/bugs/process%d.png", i))
 		if err != nil {
-			panic(err)
+			return 0, err
 		}
 		reader = bytes.NewReader(imageBytes)
 		p, _, err := image.Decode(reader)
 		if err != nil {
-			panic(err)
+			return 0, err
 		}
 
 		processList.Insert(p)
@@ -423,7 +424,7 @@ func GenAdviceImage(outPath string, data *common.VttContent, videoEndTime float6
 		counter++
 	}
 	wg.Wait()
-	return counter
+	return counter, nil
 }
 
 func splitString(input string, segmentCount int) []string {
@@ -456,16 +457,16 @@ var (
 	avatarSize      = 100.0
 )
 
-func GenMusicImageFast(imgPath string, data *common.VttContent, style *common.AdviceFoStyle) {
+func GenMusicImageFast(imgPath string, data *common.VttContent, style *common.AdviceFoStyle) error {
 	dc := gg.NewContext(Width, Height)
 	titleFrontBytes, err := sources.Sources.ReadFile("fronts/Aa厚底黑.ttf")
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	face, err := LoadFontFace(titleFrontBytes, style.Size)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	dc.SetFontFace(face)
@@ -527,19 +528,19 @@ func GenMusicImageFast(imgPath string, data *common.VttContent, style *common.Ad
 
 	imageBytes, err := sources.Sources.ReadFile("img/BG.png")
 	if err != nil {
-		panic(err)
+		return err
 	}
 	reader := bytes.NewReader(imageBytes)
 	bg, _, err := image.Decode(reader)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	var bgImg image.Image
 	if style.Background != "" {
 		bgImg, err = GetImage(style.Background)
 		if err != nil {
-			panic(err)
+			return err
 		}
 	}
 
@@ -547,38 +548,46 @@ func GenMusicImageFast(imgPath string, data *common.VttContent, style *common.Ad
 	if data.Avatar != "" {
 		avatar, err = GetImage(data.Avatar)
 		if err != nil {
-			panic(err)
+			return err
 		}
 	}
 
 	bgc := gg.NewContextForImage(bg)
 
 	if bgImg != nil {
-		putBackGroundImage(bgc, bgImg)
+		err = putBackGroundImage(bgc, bgImg)
+		if err != nil {
+			return err
+		}
 	}
 
 	if avatar != nil {
-		putAvatarImage(dc, avatar)
+		err = putAvatarImage(dc, avatar)
+		if err != nil {
+			return err
+		}
 	}
 
 	bgc.DrawImage(dc.Image(), 0, int(sHeight))
 
-	if err := bgc.SavePNG(imgPath); err != nil {
-		panic(err)
+	if err = bgc.SavePNG(imgPath); err != nil {
+		return err
 	}
+
+	return nil
 }
 
-func GenMusicImage(outPath string, data *common.VttContent, videoEndTime float64, counter int, setting *common.AdviceFoSetting, style *common.AdviceFoStyle) int {
+func GenMusicImage(outPath string, data *common.VttContent, videoEndTime float64, counter int, setting *common.AdviceFoSetting, style *common.AdviceFoStyle) (int, error) {
 	dc := gg.NewContext(Width, Height)
 
 	titleFrontBytes, err := sources.Sources.ReadFile("fronts/Aa厚底黑.ttf")
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 
 	face, err := LoadFontFace(titleFrontBytes, style.Size)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 
 	dc.SetFontFace(face)
@@ -639,19 +648,19 @@ func GenMusicImage(outPath string, data *common.VttContent, videoEndTime float64
 
 	imageBytes, err := sources.Sources.ReadFile("img/BG.png")
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 	reader := bytes.NewReader(imageBytes)
 	bg, _, err := image.Decode(reader)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 
 	var bgImg image.Image
 	if style.Background != "" {
 		bgImg, err = GetImage(style.Background)
 		if err != nil {
-			panic(err)
+			return 0, err
 		}
 	}
 
@@ -659,7 +668,7 @@ func GenMusicImage(outPath string, data *common.VttContent, videoEndTime float64
 	if data.Avatar != "" {
 		avatar, err = GetImage(data.Avatar)
 		if err != nil {
-			panic(err)
+			return 0, err
 		}
 	}
 
@@ -668,12 +677,12 @@ func GenMusicImage(outPath string, data *common.VttContent, videoEndTime float64
 	for i := 0; i < 12; i++ {
 		imageBytes, err = sources.Sources.ReadFile(fmt.Sprintf("img/bugs/process%d.png", i))
 		if err != nil {
-			panic(err)
+			return 0, err
 		}
 		reader = bytes.NewReader(imageBytes)
 		p, _, err := image.Decode(reader)
 		if err != nil {
-			panic(err)
+			return 0, err
 		}
 
 		processList.Insert(p)
@@ -708,7 +717,7 @@ func GenMusicImage(outPath string, data *common.VttContent, videoEndTime float64
 		counter++
 	}
 	wg.Wait()
-	return counter
+	return counter, nil
 }
 
 // GetImageFromNet 从远程读取图片

@@ -29,7 +29,7 @@ type ttsRsp struct {
 	} `json:"result"`
 }
 
-func CalVoiceTime(content []string, output string) float64 {
+func CalVoiceTime(content []string, output string) (float64, error) {
 	// 要发送的数据
 	requestData := []byte(fmt.Sprintf(`{
 	   "text": "%s",
@@ -46,24 +46,24 @@ func CalVoiceTime(content []string, output string) float64 {
 	// 执行 POST 请求
 	response, err := httpPost(url, requestData, nil)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 	defer response.Body.Close()
 
 	// 处理响应
 	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 
 	fmt.Println("HTTP 响应状态码:", response.Status)
 	rsp := ttsRsp{}
 
 	json.Unmarshal(responseBody, &rsp)
-	return rsp.Result.Duration
+	return rsp.Result.Duration, nil
 }
 
-func GetVoiceTTS(content []string, output string) float64 {
+func GetVoiceTTS(content []string, output string) (float64, error) {
 	// 要发送的数据
 	requestData := []byte(fmt.Sprintf(`{
 	   "text": "%s",
@@ -80,24 +80,30 @@ func GetVoiceTTS(content []string, output string) float64 {
 	// 执行 POST 请求
 	response, err := httpPost(url, requestData, nil)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 	defer response.Body.Close()
 
 	// 处理响应
 	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 
 	fmt.Println("HTTP 响应状态码:", response.Status)
 	rsp := ttsRsp{}
 
-	json.Unmarshal(responseBody, &rsp)
+	err = json.Unmarshal(responseBody, &rsp)
+	if err != nil {
+		return 0, err
+	}
 
-	base64ToWAV(rsp.Result.Audio, output)
+	err = base64ToWAV(rsp.Result.Audio, output)
+	if err != nil {
+		return 0, err
+	}
 
-	return rsp.Result.Duration
+	return rsp.Result.Duration, nil
 }
 
 // httpPost 执行 HTTP POST 请求
@@ -122,20 +128,21 @@ func httpPost(url string, data []byte, token *string) (*http.Response, error) {
 	return response, nil
 }
 
-func base64ToWAV(base64Data string, output string) {
+func base64ToWAV(base64Data string, output string) error {
 	// 解码Base64数据
 	audioData, err := base64.StdEncoding.DecodeString(strings.Replace(base64Data, `"`, "", -1))
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	// 创建并写入WAV文件
 	err = writeWAVFile(output, audioData)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	fmt.Println("成功转换为WAV文件：", output)
+	return nil
 }
 
 func writeWAVFile(fileName string, audioData []byte) error {

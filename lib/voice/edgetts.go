@@ -232,7 +232,7 @@ type EdgeTtsRsp struct {
 	Vtt   []common.VttContent `json:"vtt"`
 }
 
-func GenEdgeVoiceOnline(content []string, voiceType, outPath string, token *string) []common.VttContent {
+func GenEdgeVoiceOnline(content []string, voiceType, outPath string, token *string) ([]common.VttContent, error) {
 	// 要发送的数据
 	requestData := map[string]interface{}{
 		"voice":    voiceType,
@@ -245,30 +245,38 @@ func GenEdgeVoiceOnline(content []string, voiceType, outPath string, token *stri
 
 	ms, err := json.Marshal(requestData)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	// 执行 POST 请求
 	response, err := httpPost(url, ms, token)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	defer response.Body.Close()
 
 	// 处理响应
 	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	fmt.Println("HTTP 响应状态码:", response.Status)
 	rsp := EdgeTtsRsp{}
 
-	json.Unmarshal(responseBody, &rsp)
-	base64ToWAV(rsp.Voice, outPath)
-	return rsp.Vtt
+	err = json.Unmarshal(responseBody, &rsp)
+	if err != nil {
+		return nil, err
+	}
+
+	err = base64ToWAV(rsp.Voice, outPath)
+	if err != nil {
+		return nil, err
+	}
+
+	return rsp.Vtt, nil
 }
 
-func GenAzureVoiceOnline(content string, voiceType, audioPath string, token string) {
+func GenAzureVoiceOnline(content string, voiceType, audioPath string, token string) error {
 	// 要发送的数据
 	requestData := map[string]interface{}{
 		"voice":   voiceType,
@@ -280,22 +288,28 @@ func GenAzureVoiceOnline(content string, voiceType, audioPath string, token stri
 
 	ms, err := json.Marshal(requestData)
 	if err != nil {
-		panic(err)
+		return err
 	}
+
 	// 执行 POST 请求
 	response, err := httpPost(url, ms, &token)
 	if err != nil {
-		panic(err)
+		return err
 	}
+
 	defer response.Body.Close()
 
 	// 处理响应
 	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	fmt.Println("HTTP 响应状态码:", response.Status)
+	err = base64ToWAV(string(responseBody), audioPath)
+	if err != nil {
+		return err
+	}
 
-	base64ToWAV(string(responseBody), audioPath)
+	return nil
 }

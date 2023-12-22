@@ -86,7 +86,7 @@ func TestGenEdgeVoiceOnline(t *testing.T) {
 	}
 	token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImF2YXRhciI6Imh0dHBzOi8vaW1nLml1aHViLmNuL3Vuc3BsYXNoL25hdHVyZS9waG90by0xNjkyMzAzNjEwMDc1LWJhZTU2MzI2MDMxMC5qcGciLCJwYXNzd29yZCI6IjEyMzQ1NiIsImV4cCI6MTY5NTY0NTA0Ni45NzA2ODI5LCJpc3MiOiJ3d3QifQ.NshcCjvouL_Me_liVOUEUSS1P53QpSafJFHjmV0uZdM"
 	for _, s := range voiceList {
-		online := GenEdgeVoiceOnline([]string{text}, s, fmt.Sprintf("./%s.wav", s), &token)
+		online, _ := GenEdgeVoiceOnline([]string{text}, s, fmt.Sprintf("./%s.wav", s), &token)
 		fmt.Println(online)
 	}
 

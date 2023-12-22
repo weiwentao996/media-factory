@@ -12,11 +12,11 @@ import (
 )
 
 // GenPPTVideoWithSetting 配置生成Video
-func GenPPTVideoWithSetting(essay []common.PageData, outPath string, setting *common.PPTSetting) {
+func GenPPTVideoWithSetting(essay []common.PageData, outPath string, setting *common.PPTSetting) error {
 	fmt.Printf("\033[1;32;42m%s\n", "开始生成视频!")
 	path := fmt.Sprintf("%s/%d", outPath, time.Now().Unix())
 	if err := os.MkdirAll(path, 0444); err != nil {
-		panic(err)
+		return err
 	}
 
 	counter := 0
@@ -26,7 +26,7 @@ func GenPPTVideoWithSetting(essay []common.PageData, outPath string, setting *co
 		bgmPath := fmt.Sprintf("%s/%d.wav", path, i)
 		vtt, err := voice.GenEdgeVoice(e.Content, bgmPath)
 		if err != nil {
-			panic(err)
+			return err
 		}
 		endTime := vtt[len(vtt)-1].Time[1]
 
@@ -47,7 +47,7 @@ func GenPPTVideoWithSetting(essay []common.PageData, outPath string, setting *co
 	fmt.Printf("\033[1;32;42m%s\n", "正在生成音频......")
 	err := voice.MergeWAV(path+"/*.wav", bgmPath)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	fpsRate := 8.0
@@ -66,21 +66,22 @@ func GenPPTVideoWithSetting(essay []common.PageData, outPath string, setting *co
 	}
 
 	if err := video.MultiImageToVideo(path+"/%05d.png", bgmPath, path, fpsRate, (maxTime+1)*1000); err != nil {
-		panic(err)
+		return err
 	}
 
 	fmt.Printf("\033[1;32;42m%s\n", "已生成视频!")
+	return nil
 }
 
 // GenAdviceVideoWithSetting 配置生成Video
-func GenAdviceVideoWithSetting(advice []common.VttContent, voiceType, outPath string, setting *common.AdviceFoSetting, style *common.AdviceFoStyle, token string) {
+func GenAdviceVideoWithSetting(advice []common.VttContent, voiceType, outPath string, setting *common.AdviceFoSetting, style *common.AdviceFoStyle, token string) error {
 	if setting.FpsRate == 0 {
 		setting.FpsRate = 6.0
 	}
 	fmt.Printf("\033[1;32;42m%s\n", "开始生成视频!")
 	path := fmt.Sprintf("%s/%d", outPath, time.Now().Unix())
 	if err := os.MkdirAll(path, 0444); err != nil {
-		panic(err)
+		return err
 	}
 	bgmPath := fmt.Sprintf("%s/voice.wav", path)
 	var preTime float64
@@ -92,7 +93,11 @@ func GenAdviceVideoWithSetting(advice []common.VttContent, voiceType, outPath st
 
 	}
 
-	voice.MergeWAV(fmt.Sprintf("%s/*.wav", path), bgmPath)
+	err := voice.MergeWAV(fmt.Sprintf("%s/*.wav", path), bgmPath)
+	if err != nil {
+		return err
+	}
+
 	counter := 0
 
 	advice = append(advice, common.VttContent{
@@ -117,7 +122,7 @@ func GenAdviceVideoWithSetting(advice []common.VttContent, voiceType, outPath st
 	fmt.Printf("\033[1;32;42m%s\n", "正在合成视频......")
 	videoFilePath := path + "/video.mp4"
 	if err := video.MultiImageToVideo(path+"/%05d.png", bgmPath, videoFilePath, setting.FpsRate, (advice[len(advice)-1].Time[1]+1)*1000); err != nil {
-		panic(err)
+		return err
 	}
 
 	if setting.BgmUrl != "" {
@@ -127,15 +132,16 @@ func GenAdviceVideoWithSetting(advice []common.VttContent, voiceType, outPath st
 	}
 
 	fmt.Printf("\033[1;32;42m%s\n", "已生成视频!")
+	return nil
 }
 
-func GenVideoFast(advice []common.VttContent, voiceType, output, bmg string, style *common.AdviceFoStyle, bgmVolume float32, token string) {
+func GenVideoFast(advice []common.VttContent, voiceType, output, bmg string, style *common.AdviceFoStyle, bgmVolume float32, token string) error {
 	var audioPath, imgPath, videoPath string
 	output = fmt.Sprintf("%s/%d", output, time.Now().Unix())
 	for i, content := range advice {
 		fmt.Printf("\033[1;32;42m正在生成第%d页......\n", i+1)
 		if err := os.MkdirAll(output, 0444); err != nil {
-			panic(err)
+			return err
 		}
 
 		audioPath = fmt.Sprintf("%s/%d.wav", output, i)
@@ -149,16 +155,31 @@ func GenVideoFast(advice []common.VttContent, voiceType, output, bmg string, sty
 		img.GenMusicImageFast(imgPath, &content, style)
 
 		// 合成视频
-		video.ImageAndVoice2Video(imgPath, audioPath, videoPath)
+		err := video.ImageAndVoice2Video(imgPath, audioPath, videoPath)
+		if err != nil {
+			return err
+		}
 	}
 
 	// 融合视频
 	fmt.Printf("\033[1;32;42m%s\n", "融合视频......")
-	mergeVideoPath, _ := video.Merge(fmt.Sprintf("%s/*.mp4", output), output)
+	mergeVideoPath, err := video.Merge(fmt.Sprintf("%s/*.mp4", output), output)
+	if err != nil {
+		return err
+	}
 
 	// 添加BGM
 	finishFilePath := output + "/finish.mp4"
 	fmt.Printf("\033[1;32;42m%s\n", "正在添加bgm......")
-	video.AddBgm(mergeVideoPath, bmg, finishFilePath, bgmVolume)
-	os.RemoveAll(mergeVideoPath)
+	err = video.AddBgm(mergeVideoPath, bmg, finishFilePath, bgmVolume)
+	if err != nil {
+		return err
+	}
+
+	err = os.RemoveAll(mergeVideoPath)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
